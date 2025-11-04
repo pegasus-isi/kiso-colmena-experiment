@@ -1,0 +1,142 @@
+name: colmena-experiment
+
+software:
+  docker:
+    labels:
+      - simulation
+      - redis
+      - colmena
+      - swarm
+      - trigger
+      - llm
+
+  # ollama:
+  #   labels:
+  #     - simulation
+  #   models:
+  #     - gemma3:270m
+
+sites:
+  - kind: vagrant
+    backend: virtualbox
+    box: bento/rockylinux-9
+    user: vagrant
+    config_extra: 'config.vm.synced_folder ".", "/vagrant", disabled: true'
+    resources:
+      machines:
+        - labels:
+            - simulation
+            - colmena
+            - redis
+            - llm
+          backend: virtualbox
+          box: bento/rockylinux-9
+          user: vagrant
+          config_extra_vm: 'my.vm.synced_folder ".", "/vagrant", disabled: true'
+          flavour: "large"
+          number: 1
+        - labels:
+            - colmena
+            - swarm
+            - trigger
+          backend: virtualbox
+          box: bento/rockylinux-9
+          user: vagrant
+          config_extra_vm: 'my.vm.synced_folder ".", "/vagrant", disabled: true'
+          flavour: "large"
+          number: 1
+        - labels:
+            - colmena
+            - swarm
+          backend: virtualbox
+          box: bento/rockylinux-9
+          user: vagrant
+          config_extra_vm: 'my.vm.synced_folder ".", "/vagrant", disabled: true'
+          flavour: "large"
+          number: 2
+      networks:
+        - labels:
+            - r1
+          cidr: "172.16.42.0/16"
+
+  # - kind: fabric
+  #   rc_file: secrets/fabric_rc
+  #   walltime: "02:00:00"
+  #   site: UCSD
+  #   image: default_rocky_9
+  #   resources:
+  #     machines:
+  #       - labels:
+  #           - central-manager
+  #           - submit
+  #           - execute
+  #           - personal
+  #         flavour: big
+  #         number: 1
+
+experiments:
+  - kind: shell
+    name: colmena-experiment-1
+    description: colmena-experiment-1
+    scripts:
+      # Install Redis
+      - labels:
+          - trigger
+        script: |
+          bin/fabric-l2-network.py
+      # Install Redis
+      - labels:
+          - redis
+        script: |
+          bin/install-redis.sh
+      # Install Simulation
+      - labels:
+          - simulation
+        script: |
+          bin/install-simulation.sh
+      # Install Colmena
+      - labels:
+          - colmena
+        script: |
+          bin/install-colmena.sh
+      # Install Swarm
+      - labels:
+          - swarm
+        script: |
+          bin/install-swarm.sh
+      # Trigger Simulation
+      - labels:
+          - trigger
+        script: |
+          bin/trigger-simulation.sh
+      # Generate New Configuration
+      # - labels:
+      #     - llm
+      #   script: |
+      #     #!/bin/bash
+      #     bin/generate-new-config.sh
+    # outputs:
+    #   - labels:
+    #       - trigger
+    #     src: alpha
+    #     dst: ./
+
+  - kind: shell
+    name: colmena-experiment-2
+    description: colmena-experiment-2
+    scripts:
+      # Rebuild with New Configuration
+      - labels:
+          - trigger
+        script: |
+          bin/rebuild-config.sh
+      # Trigger Simulation
+      - labels:
+          - trigger
+        script: |
+          bin/trigger-simulation.sh
+    # outputs:
+    #   - labels:
+    #       - simulation
+    #     src: ~kiso/
+    #     dst: local-machine
