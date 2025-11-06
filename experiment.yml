@@ -8,13 +8,6 @@ software:
       - colmena
       - swarm
       - trigger
-      - llm
-
-  # ollama:
-  #   labels:
-  #     - simulation
-  #   models:
-  #     - gemma3:270m
 
 sites:
   - kind: vagrant
@@ -28,7 +21,6 @@ sites:
             - simulation
             - colmena
             - redis
-            - llm
           backend: virtualbox
           box: bento/rockylinux-9
           user: vagrant
@@ -39,25 +31,26 @@ sites:
             - colmena
             - swarm
             - trigger
+            - random
           backend: virtualbox
           box: bento/rockylinux-9
           user: vagrant
           config_extra_vm: 'my.vm.synced_folder ".", "/vagrant", disabled: true'
           flavour: "large"
           number: 1
-        - labels:
-            - colmena
-            - swarm
-          backend: virtualbox
-          box: bento/rockylinux-9
-          user: vagrant
-          config_extra_vm: 'my.vm.synced_folder ".", "/vagrant", disabled: true'
-          flavour: "large"
-          number: 2
+        #- labels:
+        #    - colmena
+        #    - swarm
+        #  backend: virtualbox
+        #  box: bento/rockylinux-9
+        #  user: vagrant
+         # config_extra_vm: 'my.vm.synced_folder ".", "/vagrant", disabled: true'
+        #  flavour: "large"
+        #  number: 2
       networks:
         - labels:
             - r1
-          cidr: "172.16.42.0/16"
+          cidr: "192.168.57.0/24"
 
   # - kind: fabric
   #   rc_file: secrets/fabric_rc
@@ -82,59 +75,52 @@ experiments:
       # Install Redis
       - labels:
           - trigger
+          - redis
+          - simulation
+          - colmena
+          - swarm
         script: |
-          bin/fabric-l2-network.py
+          sudo dnf -y install git
+      #- labels:
+      #    - trigger
+      #  script: |
+      #    bin/fabric-l2-network.py
       # Install Redis
       - labels:
           - redis
         script: |
-          bin/install-redis.sh
+          bin/launch-redis.sh
       # Install Simulation
       - labels:
           - simulation
         script: |
-          bin/install-simulation.sh
+          bin/launch-simulation.sh
       # Install Colmena
       - labels:
           - colmena
         script: |
-          bin/install-colmena.sh
+          bin/launch-colmena.sh
       # Install Swarm
       - labels:
           - swarm
         script: |
-          bin/install-swarm.sh
+          bin/launch-swarm.sh
+      # Execute random process
+      - labels:
+          - random
+        script: |
+          bin/execute-random.sh
       # Trigger Simulation
       - labels:
           - trigger
         script: |
-          bin/trigger-simulation.sh
-      # Generate New Configuration
-      # - labels:
-      #     - llm
-      #   script: |
-      #     #!/bin/bash
-      #     bin/generate-new-config.sh
-    # outputs:
+          bin/build-and-deploy.sh
+    #outputs:
     #   - labels:
-    #       - trigger
-    #     src: alpha
+    #       - redis
+    #     src: redis.log
     #     dst: ./
 
-  - kind: shell
-    name: colmena-experiment-2
-    description: colmena-experiment-2
-    scripts:
-      # Rebuild with New Configuration
-      - labels:
-          - trigger
-        script: |
-          bin/rebuild-config.sh
-      # Trigger Simulation
-      - labels:
-          - trigger
-        script: |
-          bin/trigger-simulation.sh
     # outputs:
     #   - labels:
     #       - simulation

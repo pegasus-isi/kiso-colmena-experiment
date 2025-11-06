@@ -5,6 +5,7 @@ pegasus.properties
 submit/
 secrets/
 output/
+config/
 
 # Created by https://www.toptal.com/developers/gitignore/api/git,vim,venv,emacs,linux,macos,direnv,dotenv,python,eclipse,vagrant,windows,virtualenv,intellij+all,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=git,vim,venv,emacs,linux,macos,direnv,dotenv,python,eclipse,vagrant,windows,virtualenv,intellij+all,visualstudiocode
