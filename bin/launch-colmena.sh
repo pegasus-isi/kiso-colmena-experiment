@@ -1,11 +1,26 @@
 echo "# Install Colmena"
 echo "-----------------"
 
-HARDWARE="AREA"
-AGENT_ID="agent_1_1"
-POLICY="lazy"
 ZENOH_ROUTER_IP="172.17.0.1"
 ENDPOINT="tcp://localhost:7447"
+
+# Parse arguments
+while [[ "$#" -gt 0 ]]; do
+  case $1 in
+    --hardware) HARDWARE="$2"; shift ;;
+    --agent) AGENT_ID="$2"; shift ;;
+    --policy) POLICY="$2"; shift ;;
+    *) echo "Unknown parameter passed: $1"; exit 1 ;;
+  esac
+  shift
+done
+
+# Validate required params
+if [[ -z "$HARDWARE" || -z "$AGENT_ID" || -z "$POLICY" ]]; then
+  echo "Usage: $0 --hardware <value> --agent <value> --policy <value>"
+  exit 1
+fi
+
 
 if [ ! -d $HOME/eroots_bundle ]; then
   TOKEN_FILE="$HOME/kiso-colmena-experiment/secrets/gitlab_token.txt"

@@ -15,7 +15,7 @@ AGENT_NUM="$1"
 
 NUM_AGENTS=18
 AGENTS_PER_GROUP=3
-REDIS_IP=localhost
+REDIS_IP=andes
 NUM_GROUPS=6
 
 CONFIG_FILE="config_swarm_multi_${AGENT_NUM}.yml"
@@ -37,6 +37,13 @@ python3 main.py "$AGENT_NUM" \
     --config "configs/$CONFIG_FILE" \
     --agent-type colmena --debug &
 
-tail -f "$HOME/SwarmAgents/swarm-multi/agent-${AGENT_NUM}.log" \
-    | "$HOME/kiso-colmena-experiment/bin/wait-for-text.sh" "Starting colmena agent"
+LOGFILE="$HOME/SwarmAgents/swarm-multi/agent-${AGENT_NUM}.log"
 
+# Wait for the log file to be created
+while [ ! -f "$LOGFILE" ]; do
+    sleep 0.2
+done
+
+# NOW start tailing
+tail -f "$LOGFILE" \
+    | "$HOME/kiso-colmena-experiment/bin/wait-for-text.sh" "Starting colmena agent"
