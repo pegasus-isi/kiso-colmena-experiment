@@ -1,0 +1,1174 @@
+[33mcommit 3826d5b9145936e20d95c22315de5aaf7bbc8709[m
+Author: Rajiv Mayani <mayani@isi.edu>
+Date:   Mon Nov 3 18:59:05 2025 -0800
+
+    feat: initial commit to run Colemena experiment using Kiso
+
+[1mdiff --git a/.cz.toml b/.cz.toml[m
+[1mnew file mode 100644[m
+[1mindex 0000000..6bb10c8[m
+[1m--- /dev/null[m
+[1m+++ b/.cz.toml[m
+[36m@@ -0,0 +1,12 @@[m
+[32m+[m[32m[tool.commitizen][m
+[32m+[m
+[32m+[m[32mversion = "0.0.0"[m
+[32m+[m[32mname = "cz_conventional_commits"[m
+[32m+[m[32mtag_format = "v$version"[m
+[32m+[m[32mversion_scheme = "pep440"[m
+[32m+[m[32mversion_provider = "commitizen"[m
+[32m+[m[32mupdate_changelog_on_bump = true[m
+[32m+[m[32mmajor_version_zero = true[m
+[32m+[m[32mversion_files = [[m
+[32m+[m[32m    ".cz.toml:version"[m
+[32m+[m[32m][m
+[1mdiff --git a/.github/ISSUE_TEMPLATE/bug-report.md b/.github/ISSUE_TEMPLATE/bug-report.md[m
+[1mnew file mode 100644[m
+[1mindex 0000000..3adcefa[m
+[1m--- /dev/null[m
+[1m+++ b/.github/ISSUE_TEMPLATE/bug-report.md[m
+[36m@@ -0,0 +1,28 @@[m
+[32m+[m[32m---[m
+[32m+[m[32mname: Bug report[m
+[32m+[m[32mabout: Report a bug in Kiso Colmena experiment[m
+[32m+[m[32mtitle: ''[m
+[32m+[m[32mlabels: bug[m
+[32m+[m[32massignees: ''[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m**Describe the bug**[m
+[32m+[m[32mA clear and concise description of what the bug is.[m
+[32m+[m
+[32m+[m[32m**To Reproduce**[m
+[32m+[m[32mSteps to reproduce the behavior.[m
+[32m+[m[32m1. Plan the workflow '...'[m
+[32m+[m[32m2. Run the workflow '...'[m
+[32m+[m[32m3. See error '...'[m
+[32m+[m
+[32m+[m[32m**Expected behavior**[m
+[32m+[m[32mA clear and concise description of what you expected to happen.[m
+[32m+[m
+[32m+[m[32m**Version Information (please complete the following information):**[m
+[32m+[m[32m - OS: [e.g. RockyLinux][m
+[32m+[m[32m - OS Version [e.g. 8.10][m
+[32m+[m[32m - Python Version [e.g. 3.6.1][m
+[32m+[m[32m - Kiso Version [e.g. 5.0.9][m
+[32m+[m
+[32m+[m[32m**Additional context**[m
+[32m+[m[32mAdd any other context about the problem here.[m
+[1mdiff --git a/.github/ISSUE_TEMPLATE/config.yml b/.github/ISSUE_TEMPLATE/config.yml[m
+[1mnew file mode 100644[m
+[1mindex 0000000..2251d06[m
+[1m--- /dev/null[m
+[1m+++ b/.github/ISSUE_TEMPLATE/config.yml[m
+[36m@@ -0,0 +1,8 @@[m
+[32m+[m[32mblank_issues_enabled: false[m
+[32m+[m[32mcontact_links:[m
+[32m+[m[32m  - name: Questions on GitHub Discussions[m
+[32m+[m[32m    url: https://github.com/pegasus-isi/kiso-colmena-experiment/discussions[m
+[32m+[m[32m    about: Ask questions about your own experiments on the Discussions tab.[m
+[32m+[m[32m  - name: Questions on Slack or Email[m
+[32m+[m[32m    url: https://pegasus.isi.edu/contact[m
+[32m+[m[32m    about: Ask questions about your own experiments on our Slack.[m
+[1mdiff --git a/.github/ISSUE_TEMPLATE/feature-request.md b/.github/ISSUE_TEMPLATE/feature-request.md[m
+[1mnew file mode 100644[m
+[1mindex 0000000..0b7419a[m
+[1m--- /dev/null[m
+[1m+++ b/.github/ISSUE_TEMPLATE/feature-request.md[m
+[36m@@ -0,0 +1,19 @@[m
+[32m+[m[32m---[m
+[32m+[m[32mname: Feature request[m
+[32m+[m[32mabout: Suggest a new feature for Kiso Colmena experiment[m
+[32m+[m[32mtitle: ''[m
+[32m+[m[32mlabels: ''[m
+[32m+[m[32massignees: ''[m
+[32m+[m[32m---[m
+[32m+[m
+[32m+[m[32m**Is your feature request related to a problem? Please describe.**[m
+[32m+[m[32mA clear and concise description of what the problem is. Ex. I'm always frustrated when [...][m
+[32m+[m
+[32m+[m[32m**Describe the solution you'd like**[m
+[32m+[m[32mA clear and concise description of what you want to happen.[m
+[32m+[m
+[32m+[m[32m**Describe alternatives you've considered**[m
+[32m+[m[32mA clear and concise description of any alternative solutions or features you've considered.[m
+[32m+[m
+[32m+[m[32m**Additional context**[m
+[32m+[m[32mAdd any other context or screenshots about the feature request here.[m
+[1mdiff --git a/.gitignore b/.gitignore[m
+[1mnew file mode 100644[m
+[1mindex 0000000..5bef56e[m
+[1m--- /dev/null[m
+[1m+++ b/.gitignore[m
+[36m@@ -0,0 +1,546 @@[m
+[32m+[m[32mworkflow.yml[m
+[32m+[m[32mtransformations.yml[m
+[32m+[m[32msites.yml[m
+[32m+[m[32mpegasus.properties[m
+[32m+[m[32msubmit/[m
+[32m+[m[32msecrets/[m
+[32m+[m[32moutput/[m
+[32m+[m
+[32m+[m[32m# Created by https://www.toptal.com/developers/gitignore/api/git,vim,venv,emacs,linux,macos,direnv,dotenv,python,eclipse,vagrant,windows,virtualenv,intellij+all,visualstudiocode[m
+[32m+[m[32m# Edit at https://www.toptal.com/developers/gitignore?templates=git,vim,venv,emacs,linux,macos,direnv,dotenv,python,eclipse,vagrant,windows,virtualenv,intellij+all,visualstudiocode[m
+[32m+[m
+[32m+[m[32m### direnv ###[m
+[32m+[m[32m.direnv[m
+[32m+[m[32m.envrc[m
+[32m+[m
+[32m+[m[32m### dotenv ###[m
+[32m+[m[32m.env[m
+[32m+[m
+[32m+[m[32m### Eclipse ###[m
+[32m+[m[32m.metadata[m
+[32m+[m[32mtmp/[m
+[32m+[m[32m*.tmp[m
+[32m+[m[32m*.bak[m
+[32m+[m[32m*.swp[m
+[32m+[m[32m*~.nib[m
+[32m+[m[32mlocal.properties[m
+[32m+[m[32m.settings/[m
+[32m+[m[32m.loadpath[m
+[32m+[m[32m.recommenders[m
+[32m+[m
+[32m+[m[32m# External tool builders[m
+[32m+[m[32m.externalToolBuilders/[m
+[32m+[m
+[32m+[m[32m# Locally stored "Eclipse launch configurations"[m
+[32m+[m[32m*.launch[m
+[32m+[m
+[32m+[m[32m# PyDev specific (Python IDE for Eclipse)[m
+[32m+[m[32m*.pydevproject[m
+[32m+[m
+[32m+[m[32m# CDT-specific (C/C++ Development Tooling)[m
+[32m+[m[32m.cproject[m
+[32m+[m
+[32m+[m[32m# CDT- autotools[m
+[32m+[m[32m.autotools[m
+[32m+[m
+[32m+[m[32m# Java annotation processor (APT)[m
+[32m+[m[32m.factorypath[m
+[32m+[m
+[32m+[m[32m# PDT-specific (PHP Development Tools)[m
+[32m+[m[32m.buildpath[m
+[32m+[m
+[32m+[m[32m# sbteclipse plugin[m
+[32m+[m[32m.target[m
+[32m+[m
+[32m+[m[32m# Tern plugin[m
+[32m+[m[32m.tern-project[m
+[32m+[m
+[32m+[m[32m# TeXlipse plugin[m
+[32m+[m[32m.texlipse[m
+[32m+[m
+[32m+[m[32m# STS (Spring Tool Suite)[m
+[32m+[m[32m.springBeans[m
+[32m+[m
+[32m+[m[32m# Code Recommenders[m
+[32m+[m[32m.recommenders/[m
+[32m+[m
+[32m+[m[32m# Annotation Processing[m
+[32m+[m[32m.apt_generated/[m
+[32m+[m[32m.apt_generated_test/[m
+[32m+[m
+[32m+[m[32m# Scala IDE specific (Scala & Java development for Eclipse)[m
+[32m+[m[32m.cache-main[m
+[32m+[m[32m.scala_dependencies[m
+[32m+[m[32m.worksheet[m
+[32m+[m
+[32m+[m[32m# Uncomment this line if you wish to ignore the project description file.[m
+[32m+[m[32m# Typically, this file would be tracked if it contains build/dependency configurations:[m
+[32m+[m[32m#.project[m
+[32m+[m
+[32m+[m[32m### Eclipse Patch ###[m
+[32m+[m[32m# Spring Boot Tooling[m
+[32m+[m[32m.sts4-cache/[m
+[32m+[m
+[32m+[m[32m### Emacs ###[m
+[32m+[m[32m# -*- mode: gitignore; -*-[m
+[32m+[m[32m*~[m
+[32m+[m[32m\#*\#[m
+[32m+[m[32m/.emacs.desktop[m
+[32m+[m[32m/.emacs.desktop.lock[m
+[32m+[m[32m*.elc[m
+[32m+[m[32mauto-save-list[m
+[32m+[m[32mtramp[m
+[32m+[m[32m.\#*[m
+[32m+[m
+[32m+[m[32m# Org-mode[m
+[32m+[m[32m.org-id-locations[m
+[32m+[m[32m*_archive[m
+[32m+[m
+[32m+[m[32m# flymake-mode[m
+[32m+[m[32m*_flymake.*[m
+[32m+[m
+[32m+[m[32m# eshell files[m
+[32m+[m[32m/eshell/history[m
+[32m+[m[32m/eshell/lastdir[m
+[32m+[m
+[32m+[m[32m# elpa packages[m
+[32m+[m[32m/elpa/[m
+[32m+[m
+[32m+[m[32m# reftex files[m
+[32m+[m[32m*.rel[m
+[32m+[m
+[32m+[m[32m# AUCTeX auto folder[m
+[32m+[m[32m/auto/[m
+[32m+[m
+[32m+[m[32m# cask packages[m
+[32m+[m[32m.cask/[m
+[32m+[m[32mdist/[m
+[32m+[m
+[32m+[m[32m# Flycheck[m
+[32m+[m[32mflycheck_*.el[m
+[32m+[m
+[32m+[m[32m# server auth directory[m
+[32m+[m[32m/server/[m
+[32m+[m
+[32m+[m[32m# projectiles files[m
+[32m+[m[32m.projectile[m
+[32m+[m
+[32m+[m[32m# directory configuration[m
+[32m+[m[32m.dir-locals.el[m
+[32m+[m
+[32m+[m[32m# network security[m
+[32m+[m[32m/network-security.data[m
+[32m+[m
+[32m+[m
+[32m+[m[32m### Git ###[m
+[32m+[m[32m# Created by git for backups. To disable backups in Git:[m
+[32m+[m[32m# $ git config --global mergetool.keepBackup false[m
+[32m+[m[32m*.orig[m
+[32m+[m
+[32m+[m[32m# Created by git when using merge tools for conflicts[m
+[32m+[m[32m*.BACKUP.*[m
+[32m+[m[32m*.BASE.*[m
+[32m+[m[32m*.LOCAL.*[m
+[32m+[m[32m*.REMOTE.*[m
+[32m+[m[32m*_BACKUP_*.txt[m
+[32m+[m[32m*_BASE_*.txt[m
+[32m+[m[32m*_LOCAL_*.txt[m
+[32m+[m[32m*_REMOTE_*.txt[m
+[32m+[m
+[32m+[m[32m### Intellij+all ###[m
+[32m+[m[32m# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider[m
+[32m+[m[32m# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839[m
+[32m+[m
+[32m+[m[32m# User-specific stuff[m
+[32m+[m[32m.idea/**/workspace.xml[m
+[32m+[m[32m.idea/**/tasks.xml[m
+[32m+[m[32m.idea/**/usage.statistics.xml[m
+[32m+[m[32m.idea/**/dictionaries[m
+[32m+[m[32m.idea/**/shelf[m
+[32m+[m
+[32m+[m[32m# AWS User-specific[m
+[32m+[m[32m.idea/**/aws.xml[m
+[32m+[m
+[32m+[m[32m# Generated files[m
+[32m+[m[32m.idea/**/contentModel.xml[m
+[32m+[m
+[32m+[m[32m# Sensitive or high-churn files[m
+[32m+[m[32m.idea/**/dataSources/[m
+[32m+[m[32m.idea/**/dataSources.ids[m
+[32m+[m[32m.idea/**/dataSources.local.xml[m
+[32m+[m[32m.idea/**/sqlDataSources.xml[m
+[32m+[m[32m.idea/**/dynamic.xml[m
+[32m+[m[32m.idea/**/uiDesigner.xml[m
+[32m+[m[32m.idea/**/dbnavigator.xml[m
+[32m+[m
+[32m+[m[32m# Gradle[m
+[32m+[m[32m.idea/**/gradle.xml[m
+[32m+[m[32m.idea/**/libraries[m
+[32m+[m
+[32m+[m[32m# Gradle and Maven with auto-import[m
+[32m+[m[32m# When using Gradle or Maven with auto-import, you should exclude module files,[m
+[32m+[m[32m# since they will be recreated, and may cause churn.  Uncomment if using[m
+[32m+[m[32m# auto-import.[m
+[32m+[m[32m# .idea/artifacts[m
+[32m+[m[32m# .idea/compiler.xml[m
+[32m+[m[32m# .idea/jarRepositories.xml[m
+[32m+[m[32m# .idea/modules.xml[m
+[32m+[m[32m# .idea/*.iml[m
+[32m+[m[32m# .idea/modules[m
+[32m+[m[32m# *.iml[m
+[32m+[m[32m# *.ipr[m
+[32m+[m
+[32m+[m[32m# CMake[m
+[32m+[m[32mcmake-build-*/[m
+[32m+[m
+[32m+[m[32m# Mongo Explorer plugin[m
+[32m+[m[32m.idea/**/mongoSettings.xml[m
+[32m+[m
+[32m+[m[32m# File-based project format[m
+[32m+[m[32m*.iws[m
+[32m+[m
+[32m+[m[32m# IntelliJ[m
+[32m+[m[32mout/[m
+[32m+[m
+[32m+[m[32m# mpeltonen/sbt-idea plugin[m
+[32m+[m[32m.idea_modules/[m
+[32m+[m
+[32m+[m[32m# JIRA plugin[m
+[32m+[m[32matlassian-ide-plugin.xml[m
+[32m+[m
+[32m+[m[32m# Cursive Clojure plugin[m
+[32m+[m[32m.idea/replstate.xml[m
+[32m+[m
+[32m+[m[32m# SonarLint plugin[m
+[32m+[m[32m.idea/sonarlint/[m
+[32m+[m
+[32m+[m[32m# Crashlytics plugin (for Android Studio and IntelliJ)[m
+[32m+[m[32mcom_crashlytics_export_strings.xml[m
+[32m+[m[32mcrashlytics.properties[m
+[32m+[m[32mcrashlytics-build.properties[m
+[32m+[m[32mfabric.properties[m
+[32m+[m
+[32m+[m[32m# Editor-based Rest Client[m
+[32m+[m[32m.idea/httpRequests[m
+[32m+[m
+[32m+[m[32m# Android studio 3.1+ serialized cache file[m
+[32m+[m[32m.idea/caches/build_file_checksums.ser[m
+[32m+[m
+[32m+[m[32m### Intellij+all Patch ###[m
+[32m+[m[32m# Ignore everything but code style settings and run configurations[m
+[32m+[m[32m# that are supposed to be shared within teams.[m
+[32m+[m
+[32m+[m[32m.idea/*[m
+[32m+[m
+[32m+[m[32m!.idea/codeStyles[m
+[32m+[m[32m!.idea/runConfigurations[m
+[32m+[m
+[32m+[m[32m### Linux ###[m
+[32m+[m
+[32m+[m[32m# temporary files which can be created if a process still has a handle open of a deleted file[m
+[32m+[m[32m.fuse_hidden*[m
+[32m+[m
+[32m+[m[32m# KDE directory preferences[m
+[32m+[m[32m.directory[m
+[32m+[m
+[32m+[m[32m# Linux trash folder which might appear on any partition or disk[m
+[32m+[m[32m.Trash-*[m
+[32m+[m
+[32m+[m[32m# .nfs files are created when an open file is removed but is still being accessed[m
+[32m+[m[32m.nfs*[m
+[32m+[m
+[32m+[m[32m### macOS ###[m
+[32m+[m[32m# General[m
+[32m+[m[32m.DS_Store[m
+[32m+[m[32m.AppleDouble[m
+[32m+[m[32m.LSOverride[m
+[32m+[m
+[32m+[m[32m# Icon must end with two \r[m
+[32m+[m[32mIcon[m
+[32m+[m
+[32m+[m
+[32m+[m[32m# Thumbnails[m
+[32m+[m[32m._*[m
+[32m+[m
+[32m+[m[32m# Files that might appear in the root of a volume[m
+[32m+[m[32m.DocumentRevisions-V100[m
+[32m+[m[32m.fseventsd[m
+[32m+[m[32m.Spotlight-V100[m
+[32m+[m[32m.TemporaryItems[m
+[32m+[m[32m.Trashes[m
+[32m+[m[32m.VolumeIcon.icns[m
+[32m+[m[32m.com.apple.timemachine.donotpresent[m
+[32m+[m
+[32m+[m[32m# Directories potentially created on remote AFP share[m
+[32m+[m[32m.AppleDB[m
+[32m+[m[32m.AppleDesktop[m
+[32m+[m[32mNetwork Trash Folder[m
+[32m+[m[32mTemporary Items[m
+[32m+[m[32m.apdisk[m
+[32m+[m
+[32m+[m[32m### macOS Patch ###[m
+[32m+[m[32m# iCloud generated files[m
+[32m+[m[32m*.icloud[m
+[32m+[m
+[32m+[m[32m### Python ###[m
+[32m+[m[32m# Byte-compiled / optimized / DLL files[m
+[32m+[m[32m__pycache__/[m
+[32m+[m[32m*.py[cod][m
+[32m+[m[32m*$py.class[m
+[32m+[m
+[32m+[m[32m# C extensions[m
+[32m+[m[32m*.so[m
+[32m+[m
+[32m+[m[32m# Distribution / packaging[m
+[32m+[m[32m.Python[m
+[32m+[m[32mbuild/[m
+[32m+[m[32mdevelop-eggs/[m
+[32m+[m[32mdownloads/[m
+[32m+[m[32meggs/[m
+[32m+[m[32m.eggs/[m
+[32m+[m[32mlib/[m
+[32m+[m[32mlib64/[m
+[32m+[m[32mparts/[m
+[32m+[m[32msdist/[m
+[32m+[m[32mvar/[m
+[32m+[m[32mwheels/[m
+[32m+[m[32mshare/python-wheels/[m
+[32m+[m[32m*.egg-info/[m
+[32m+[m[32m.installed.cfg[m
+[32m+[m[32m*.egg[m
+[32m+[m[32mMANIFEST[m
+[32m+[m
+[32m+[m[32m# PyInstaller[m
+[32m+[m[32m#  Usually these files are written by a python script from a template[m
+[32m+[m[32m#  before PyInstaller builds the exe, so as to inject date/other infos into it.[m
+[32m+[m[32m*.manifest[m
+[32m+[m[32m*.spec[m
+[32m+[m
+[32m+[m[32m# Installer logs[m
+[32m+[m[32mpip-log.txt[m
+[32m+[m[32mpip-delete-this-directory.txt[m
+[32m+[m
+[32m+[m[32m# Unit test / coverage reports[m
+[32m+[m[32mhtmlcov/[m
+[32m+[m[32m.tox/[m
+[32m+[m[32m.nox/[m
+[32m+[m[32m.coverage[m
+[32m+[m[32m.coverage.*[m
+[32m+[m[32m.cache[m
+[32m+[m[32mnosetests.xml[m
+[32m+[m[32mcoverage.xml[m
+[32m+[m[32m*.cover[m
+[32m+[m[32m*.py,cover[m
+[32m+[m[32m.hypothesis/[m
+[32m+[m[32m.pytest_cache/[m
+[32m+[m[32mcover/[m
+[32m+[m
+[32m+[m[32m# Translations[m
+[32m+[m[32m*.mo[m
+[32m+[m[32m*.pot[m
+[32m+[m
+[32m+[m[32m# Django stuff:[m
+[32m+[m[32m*.log[m
+[32m+[m[32mlocal_settings.py[m
+[32m+[m[32mdb.sqlite3[m
+[32m+[m[32mdb.sqlite3-journal[m
+[32m+[m
+[32m+[m[32m# Flask stuff:[m
+[32m+[m[32minstance/[m
+[32m+[m[32m.webassets-cache[m
+[32m+[m
+[32m+[m[32m# Scrapy stuff:[m
+[32m+[m[32m.scrapy[m
+[32m+[m
+[32m+[m[32m# Sphinx documentation[m
+[32m+[m[32mdocs/_build/[m
+[32m+[m
+[32m+[m[32m# PyBuilder[m
+[32m+[m[32m.pybuilder/[m
+[32m+[m[32mtarget/[m
+[32m+[m
+[32m+[m[32m# Jupyter Notebook[m
+[32m+[m[32m.ipynb_checkpoints[m
+[32m+[m
+[32m+[m[32m# IPython[m
+[32m+[m[32mprofile_default/[m
+[32m+[m[32mipython_config.py[m
+[32m+[m
+[32m+[m[32m# pyenv[m
+[32m+[m[32m#   For a library or package, you might want to ignore these files since the code is[m
+[32m+[m[32m#   intended to run in multiple environments; otherwise, check them in:[m
+[32m+[m[32m.python-version[m
+[32m+[m
+[32m+[m[32m# pipenv[m
+[32m+[m[32m#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.[m
+[32m+[m[32m#   However, in case of collaboration, if having platform-specific dependencies or dependencies[m
+[32m+[m[32m#   having no cross-platform support, pipenv may install dependencies that don't work, or not[m
+[32m+[m[32m#   install all needed dependencies.[m
+[32m+[m[32m#Pipfile.lock[m
+[32m+[m
+[32m+[m[32m# poetry[m
+[32m+[m[32m#   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.[m
+[32m+[m[32m#   This is especially recommended for binary packages to ensure reproducibility, and is more[m
+[32m+[m[32m#   commonly ignored for libraries.[m
+[32m+[m[32m#   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control[m
+[32m+[m[32m#poetry.lock[m
+[32m+[m
+[32m+[m[32m# pdm[m
+[32m+[m[32m#   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.[m
+[32m+[m[32m#pdm.lock[m
+[32m+[m[32m#   pdm stores project-wide configurations in .pdm.toml, but it is recommended to not include it[m
+[32m+[m[32m#   in version control.[m
+[32m+[m[32m#   https://pdm.fming.dev/#use-with-ide[m
+[32m+[m[32m.pdm.toml[m
+[32m+[m
+[32m+[m[32m# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm[m
+[32m+[m[32m__pypackages__/[m
+[32m+[m
+[32m+[m[32m# Celery stuff[m
+[32m+[m[32mcelerybeat-schedule[m
+[32m+[m[32mcelerybeat.pid[m
+[32m+[m
+[32m+[m[32m# SageMath parsed files[m
+[32m+[m[32m*.sage.py[m
+[32m+[m
+[32m+[m[32m# Environments[m
+[32m+[m[32m.venv[m
+[32m+[m[32menv/[m
+[32m+[m[32mvenv/[m
+[32m+[m[32mENV/[m
+[32m+[m[32menv.bak/[m
+[32m+[m[32mvenv.bak/[m
+[32m+[m
+[32m+[m[32m# Spyder project settings[m
+[32m+[m[32m.spyderproject[m
+[32m+[m[32m.spyproject[m
+[32m+[m
+[32m+[m[32m# Rope project settings[m
+[32m+[m[32m.ropeproject[m
+[32m+[m
+[32m+[m[32m# mkdocs documentation[m
+[32m+[m[32m/site[m
+[32m+[m
+[32m+[m[32m# mypy[m
+[32m+[m[32m.mypy_cache/[m
+[32m+[m[32m.dmypy.json[m
+[32m+[m[32mdmypy.json[m
+[32m+[m
+[32m+[m[32m# Pyre type checker[m
+[32m+[m[32m.pyre/[m
+[32m+[m
+[32m+[m[32m# pytype static type analyzer[m
+[32m+[m[32m.pytype/[m
+[32m+[m
+[32m+[m[32m# Cython debug symbols[m
+[32m+[m[32mcython_debug/[m
+[32m+[m
+[32m+[m[32m# PyCharm[m
+[32m+[m[32m#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can[m
+[32m+[m[32m#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore[m
+[32m+[m[32m#  and can be added to the global gitignore or merged into this file.  For a more nuclear[m
+[32m+[m[32m#  option (not recommended) you can uncomment the following to ignore the entire idea folder.[m
+[32m+[m[32m#.idea/[m
+[32m+[m
+[32m+[m[32m### Python Patch ###[m
+[32m+[m[32m# Poetry local configuration file - https://python-poetry.org/docs/configuration/#local-configuration[m
+[32m+[m[32mpoetry.toml[m
+[32m+[m
+[32m+[m[32m# ruff[m
+[32m+[m[32m.ruff_cache/[m
+[32m+[m
+[32m+[m[32m# LSP config files[m
+[32m+[m[32mpyrightconfig.json[m
+[32m+[m
+[32m+[m[32m### Vagrant ###[m
+[32m+[m[32m# General[m
+[32m+[m[32m.vagrant/[m
+[32m+[m[32mVagrantfile[m
+[32m+[m
+[32m+[m[32m# Log files (if you are creating logs in debug mode, uncomment this)[m
+[32m+[m[32m# *.log[m
+[32m+[m
+[32m+[m[32m### Vagrant Patch ###[m
+[32m+[m[32m*.box[m
+[32m+[m
+[32m+[m[32m### venv ###[m
+[32m+[m[32m# Virtualenv[m
+[32m+[m[32m# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/[m
+[32m+[m[32m[Ii]nclude[m
+[32m+[m[32m[Ll]ib[m
+[32m+[m[32m[Ll]ib64[m
+[32m+[m[32m[Ll]ocal[m
+[32m+[m[32m[Ss]cripts[m
+[32m+[m[32mpyvenv.cfg[m
+[32m+[m[32mpip-selfcheck.json[m
+[32m+[m
+[32m+[m[32m### Vim ###[m
+[32m+[m[32m# Swap[m
+[32m+[m[32m[._]*.s[a-v][a-z][m
+[32m+[m[32m!*.svg  # comment out if you don't need vector files[m
+[32m+[m[32m[._]*.sw[a-p][m
+[32m+[m[32m[._]s[a-rt-v][a-z][m
+[32m+[m[32m[._]ss[a-gi-z][m
+[32m+[m[32m[._]sw[a-p][m
+[32m+[m
+[32m+[m[32m# Session[m
+[32m+[m[32mSession.vim[m
+[32m+[m[32mSessionx.vim[m
+[32m+[m
+[32m+[m[32m# Temporary[m
+[32m+[m[32m.netrwhist[m
+[32m+[m[32m# Auto-generated tag files[m
+[32m+[m[32mtags[m
+[32m+[m[32m# Persistent undo[m
+[32m+[m[32m[._]*.un~[m
+[32m+[m
+[32m+[m[32m### VirtualEnv ###[m
+[32m+[m[32m# Virtualenv[m
+[32m+[m[32m# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/[m
+[32m+[m
+[32m+[m[32m### VisualStudioCode ###[m
+[32m+[m[32m.vscode/*[m
+[32m+[m[32m!.vscode/settings.json[m
+[32m+[m[32m!.vscode/tasks.json[m
+[32m+[m[32m!.vscode/launch.json[m
+[32m+[m[32m!.vscode/extensions.json[m
+[32m+[m[32m!.vscode/*.code-snippets[m
+[32m+[m
+[32m+[m[32m# Local History for Visual Studio Code[m
+[32m+[m[32m.history/[m
+[32m+[m
+[32m+[m[32m# Built Visual Studio Code Extensions[m
+[32m+[m[32m*.vsix[m
+[32m+[m
+[32m+[m[32m### VisualStudioCode Patch ###[m
+[32m+[m[32m# Ignore all local history of files[m
+[32m+[m[32m.history[m
+[32m+[m[32m.ionide[m
+[32m+[m
+[32m+[m[32m### Windows ###[m
+[32m+[m[32m# Windows thumbnail cache files[m
+[32m+[m[32mThumbs.db[m
+[32m+[m[32mThumbs.db:encryptable[m
+[32m+[m[32mehthumbs.db[m
+[32m+[m[32mehthumbs_vista.db[m
+[32m+[m
+[32m+[m[32m# Dump file[m
+[32m+[m[32m*.stackdump[m
+[32m+[m
+[32m+[m[32m# Folder config file[m
+[32m+[m[32m[Dd]esktop.ini[m
+[32m+[m
+[32m+[m[32m# Recycle Bin used on file shares[m
+[32m+[m[32m$RECYCLE.BIN/[m
+[32m+[m
+[32m+[m[32m# Windows Installer files[m
+[32m+[m[32m*.cab[m
+[32m+[m[32m*.msi[m
+[32m+[m[32m*.msix[m
+[32m+[m[32m*.msm[m
+[32m+[m[32m*.msp[m
+[32m+[m
+[32m+[m[32m# Windows shortcuts[m
+[32m+[m[32m*.lnk[m
+[32m+[m
+[32m+[m[32m# End of https://www.toptal.com/developers/gitignore/api/git,vim,venv,emacs,linux,macos,direnv,dotenv,python,eclipse,vagrant,windows,virtualenv,intellij+all,visualstudiocode[m
+[1mdiff --git a/CHANGELOG.md b/CHANGELOG.md[m
+[1mnew file mode 100644[m
+[1mindex 0000000..e69de29[m
+[1mdiff --git a/LICENSE.md b/LICENSE.md[m
+[1mnew file mode 100644[m
+[1mindex 0000000..261eeb9[m
+[1m--- /dev/null[m
+[1m+++ b/LICENSE.md[m
+[36m@@ -0,0 +1,201 @@[m
+[32m+[m[32m                                 Apache License[m
+[32m+[m[32m                           Version 2.0, January 2004[m
+[32m+[m[32m                        http://www.apache.org/licenses/[m
+[32m+[m
+[32m+[m[32m   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION[m
+[32m+[m
+[32m+[m[32m   1. Definitions.[m
+[32m+[m
+[32m+[m[32m      "License" shall mean the terms and conditions for use, reproduction,[m
+[32m+[m[32m      and distribution as defined by Sections 1 through 9 of this document.[m
+[32m+[m
+[32m+[m[32m      "Licensor" shall mean the copyright owner or entity authorized by[m
+[32m+[m[32m      the copyright owner that is granting the License.[m
+[32m+[m
+[32m+[m[32m      "Legal Entity" shall mean the union of the acting entity and all[m
+[32m+[m[32m      other entities that control, are controlled by, or are under common[m
+[32m+[m[32m      control with that entity. For the purposes of this definition,[m
+[32m+[m[32m      "control" means (i) the power, direct or indirect, to cause the[m
+[32m+[m[32m      direction or management of such entity, whether by contract or[m
+[32m+[m[32m      otherwise, or (ii) ownership of fifty percent (50%) or more of the[m
+[32m+[m[32m      outstanding shares, or (iii) beneficial ownership of such entity.[m
+[32m+[m
+[32m+[m[32m      "You" (or "Your") shall mean an individual or Legal Entity[m
+[32m+[m[32m      exercising permissions granted by this License.[m
+[32m+[m
+[32m+[m[32m      "Source" form shall mean the preferred form for making modifications,[m
+[32m+[m[32m      including but not limited to software source code, documentation[m
+[32m+[m[32m      source, and configuration files.[m
+[32m+[m
+[32m+[m[32m      "Object" form shall mean any form resulting from mechanical[m
+[32m+[m[32m      transformation or translation of a Source form, including but[m
+[32m+[m[32m      not limited to compiled object code, generated documentation,[m
+[32m+[m[32m      and conversions to other media types.[m
+[32m+[m
+[32m+[m[32m      "Work" shall mean the work of authorship, whether in Source or[m
+[32m+[m[32m      Object form, made available under the License, as indicated by a[m
+[32m+[m[32m      copyright notice that is included in or attached to the work[m
+[32m+[m[32m      (an example is provided in the Appendix below).[m
+[32m+[m
+[32m+[m[32m      "Derivative Works" shall mean any work, whether in Source or Object[m
+[32m+[m[32m      form, that is based on (or derived from) the Work and for which the[m
+[32m+[m[32m      editorial revisions, annotations, elaborations, or other modifications[m
+[32m+[m[32m      represent, as a whole, an original work of authorship. For the purposes[m
+[32m+[m[32m      of this License, Derivative Works shall not include works that remain[m
+[32m+[m[32m      separable from, or merely link (or bind by name) to the interfaces of,[m
+[32m+[m[32m      the Work and Derivative Works thereof.[m
+[32m+[m
+[32m+[m[32m      "Contribution" shall mean any work of authorship, including[m
+[32m+[m[32m      the original version of the Work and any modifications or additions[m
+[32m+[m[32m      to that Work or Derivative Works thereof, that is intentionally[m
+[32m+[m[32m      submitted to Licensor for inclusion in the Work by the copyright owner[m
+[32m+[m[32m      or by an individual or Legal Entity authorized to submit on behalf of[m
+[32m+[m[32m      the copyright owner. For the purposes of this definition, "submitted"[m
+[32m+[m[32m      means any form of electronic, verbal, or written communication sent[m
+[32m+[m[32m      to the Licensor or its representatives, including but not limited to[m
+[32m+[m[32m      communication on electronic mailing lists, source code control systems,[m
+[32m+[m[32m      and issue tracking systems that are managed by, or on behalf of, the[m
+[32m+[m[32m      Licensor for the purpose of discussing and improving the Work, but[m
+[32m+[m[32m      excluding communication that is conspicuously marked or otherwise[m
+[32m+[m[32m      designated in writing by the copyright owner as "Not a Contribution."[m
+[32m+[m
+[32m+[m[32m      "Contributor" shall mean Licensor and any individual or Legal Entity[m
+[32m+[m[32m      on behalf of whom a Contribution has been received by Licensor and[m
+[32m+[m[32m      subsequently incorporated within the Work.[m
+[32m+[m
+[32m+[m[32m   2. Grant of Copyright License. Subject to the terms and conditions of[m
+[32m+[m[32m      this License, each Contributor hereby grants to You a perpetual,[m
+[32m+[m[32m      worldwide, non-exclusive, no-charge, royalty-free, irrevocable[m
+[32m+[m[32m      copyright license to reproduce, prepare Derivative Works of,[m
+[32m+[m[32m      publicly display, publicly perform, sublicense, and distribute the[m
+[32m+[m[32m      Work and such Derivative Works in Source or Object form.[m
+[32m+[m
+[32m+[m[32m   3. Grant of Patent License. Subject to the terms and conditions of[m
+[32m+[m[32m      this License, each Contributor hereby grants to You a perpetual,[m
+[32m+[m[32m      worldwide, non-exclusive, no-charge, royalty-free, irrevocable[m
+[32m+[m[32m      (except as stated in this section) patent license to make, have made,[m
+[32m+[m[32m      use, offer to sell, sell, import, and otherwise transfer the Work,[m
+[32m+[m[32m      where such license applies only to those patent claims licensable[m
+[32m+[m[32m      by such Contributor that are necessarily infringed by their[m
+[32m+[m[32m      Contribution(s) alone or by combination of their Contribution(s)[m
+[32m+[m[32m      with the Work to which such Contribution(s) was submitted. If You[m
+[32m+[m[32m      institute patent litigation against any entity (including a[m
+[32m+[m[32m      cross-claim or counterclaim in a lawsuit) alleging that the Work[m
+[32m+[m[32m      or a Contribution incorporated within the Work constitutes direct[m
+[32m+[m[32m      or contributory patent infringement, then any patent licenses[m
+[32m+[m[32m      granted to You under this License for that Work shall terminate[m
+[32m+[m[32m      as of the date such litigation is filed.[m
+[32m+[m
+[32m+[m[32m   4. Redistribution. You may reproduce and distribute copies of the[m
+[32m+[m[32m      Work or Derivative Works thereof in any medium, with or without[m
+[32m+[m[32m      modifications, and in Source or Object form, provided that You[m
+[32m+[m[32m      meet the following conditions:[m
+[32m+[m
+[32m+[m[32m      (a) You must give any other recipients of the Work or[m
+[32m+[m[32m          Derivative Works a copy of this License; and[m
+[32m+[m
+[32m+[m[32m      (b) You must cause any modified files to carry prominent notices[m
+[32m+[m[32m          stating that You changed the files; and[m
+[32m+[m
+[32m+[m[32m      (c) You must retain, in the Source form of any Derivative Works[m
+[32m+[m[32m          that You distribute, all copyright, patent, trademark, and[m
+[32m+[m[32m          attribution notices from the Source form of the Work,[m
+[32m+[m[32m          excluding those notices that do not pertain to any part of[m
+[32m+[m[32m          the Derivative Works; and[m
+[32m+[m
+[32m+[m[32m      (d) If the Work includes a "NOTICE" text file as part of its[m
+[32m+[m[32m          distribution, then any Derivative Works that You distribute must[m
+[32m+[m[32m          include a readable copy of the attribution notices contained[m
+[32m+[m[32m          within such NOTICE file, excluding those notices that do not[m
+[32m+[m[32m          pertain to any part of the Derivative Works, in at least one[m
+[32m+[m[32m          of the following places: within a NOTICE text file distributed[m
+[32m+[m[32m          as part of the Derivative Works; within the Source form or[m
+[32m+[m[32m          documentation, if provided along with the Derivative Works; or,[m
+[32m+[m[32m          within a display generated by the Derivative Works, if and[m
+[32m+[m[32m          wherever such third-party notices normally appear. The contents[m
+[32m+[m[32m          of the NOTICE file are for informational purposes only and[m
+[32m+[m[32m          do not modify the License. You may add Your own attribution[m
+[32m+[m[32m          notices within Derivative Works that You distribute, alongside[m
+[32m+[m[32m          or as an addendum to the NOTICE text from the Work, provided[m
+[32m+[m[32m          that such additional attribution notices cannot be construed[m
+[32m+[m[32m          as modifying the License.[m
+[32m+[m
+[32m+[m[32m      You may add Your own copyright statement to Your modifications and[m
+[32m+[m[32m      may provide additional or different license terms and conditions[m
+[32m+[m[32m      for use, reproduction, or distribution of Your modifications, or[m
+[32m+[m[32m      for any such Derivative Works as a whole, provided Your use,[m
+[32m+[m[32m      reproduction, and distribution of the Work otherwise complies with[m
+[32m+[m[32m      the conditions stated in this License.[m
+[32m+[m
+[32m+[m[32m   5. Submission of Contributions. Unless You explicitly state otherwise,[m
+[32m+[m[32m      any Contribution intentionally submitted for inclusion in the Work[m
+[32m+[m[32m      by You to the Licensor shall be under the terms and conditions of[m
+[32m+[m[32m      this License, without any additional terms or conditions.[m
+[32m+[m[32m      Notwithstanding the above, nothing herein shall supersede or modify[m
+[32m+[m[32m      the terms of any separate license agreement you may have executed[m
+[32m+[m[32m      with Licensor regarding such Contributions.[m
+[32m+[m
+[32m+[m[32m   6. Trademarks. This License does not grant permission to use the trade[m
+[32m+[m[32m      names, trademarks, service marks, or product names of the Licensor,[m
+[32m+[m[32m      except as required for reasonable and customary use in describing the[m
+[32m+[m[32m      origin of the Work and reproducing the content of the NOTICE file.[m
+[32m+[m
+[32m+[m[32m   7. Disclaimer of Warranty. Unless required by applicable law or[m
+[32m+[m[32m      agreed to in writing, Licensor provides the Work (and each[m
+[32m+[m[32m      Contributor provides its Contributions) on an "AS IS" BASIS,[m
+[32m+[m[32m      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or[m
+[32m+[m[32m      implied, including, without limitation, any warranties or conditions[m
+[32m+[m[32m      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A[m
+[32m+[m[32m      PARTICULAR PURPOSE. You are solely responsible for determining the[m
+[32m+[m[32m      appropriateness of using or redistributing the Work and assume any[m
+[32m+[m[32m      risks associated with Your exercise of permissions under this License.[m
+[32m+[m
+[32m+[m[32m   8. Limitation of Liability. In no event and under no legal theory,[m
+[32m+[m[32m      whether in tort (including negligence), contract, or otherwise,[m
+[32m+[m[32m      unless required by applicable law (such as deliberate and grossly[m
+[32m+[m[32m      negligent acts) or agreed to in writing, shall any Contributor be[m
+[32m+[m[32m      liable to You for damages, including any direct, indirect, special,[m
+[32m+[m[32m      incidental, or consequential damages of any character arising as a[m
+[32m+[m[32m      result of this License or out of the use or inability to use the[m
+[32m+[m[32m      Work (including but not limited to damages for loss of goodwill,[m
+[32m+[m[32m      work stoppage, computer failure or malfunction, or any and all[m
+[32m+[m[32m      other commercial damages or losses), even if such Contributor[m
+[32m+[m[32m      has been advised of the possibility of such damages.[m
+[32m+[m
+[32m+[m[32m   9. Accepting Warranty or Additional Liability. While redistributing[m
+[32m+[m[32m      the Work or Derivative Works thereof, You may choose to offer,[m
+[32m+[m[32m      and charge a fee for, acceptance of support, warranty, indemnity,[m
+[32m+[m[32m      or other liability obligations and/or rights consistent with this[m
+[32m+[m[32m      License. However, in accepting such obligations, You may act only[m
+[32m+[m[32m      on Your own behalf and on Your sole responsibility, not on behalf[m
+[32m+[m[32m      of any other Contributor, and only if You agree to indemnify,[m
+[32m+[m[32m      defend, and hold each Contributor harmless for any liability[m
+[32m+[m[32m      incurred by, or claims asserted against, such Contributor by reason[m
+[32m+[m[32m      of your accepting any such warranty or additional liability.[m
+[32m+[m
+[32m+[m[32m   END OF TERMS AND CONDITIONS[m
+[32m+[m
+[32m+[m[32m   APPENDIX: How to apply the Apache License to your work.[m
+[32m+[m
+[32m+[m[32m      To apply the Apache License to your work, attach the following[m
+[32m+[m[32m      boilerplate notice, with the fields enclosed by brackets "[]"[m
+[32m+[m[32m      replaced with your own identifying information. (Don't include[m
+[32m+[m[32m      the brackets!)  The text should be enclosed in the appropriate[m
+[32m+[m[32m      comment syntax for the file format. We also recommend that a[m
+[32m+[m[32m      file or class name and description of purpose be included on the[m
+[32m+[m[32m      same "printed page" as the copyright notice for easier[m
+[32m+[m[32m      identification within third-party archives.[m
+[32m+[m
+[32m+[m[32m   Copyright [yyyy] [name of copyright owner][m
+[32m+[m
+[32m+[m[32m   Licensed under the Apache License, Version 2.0 (the "License");[m
+[32m+[m[32m   you may not use this file except in compliance with the License.[m
+[32m+[m[32m   You may obtain a copy of the License at[m
+[32m+[m
+[32m+[m[32m       http://www.apache.org/licenses/LICENSE-2.0[m
+[32m+[m
+[32m+[m[32m   Unless required by applicable law or agreed to in writing, software[m
+[32m+[m[32m   distributed under the License is distributed on an "AS IS" BASIS,[m
+[32m+[m[32m   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.[m
+[32m+[m[32m   See the License for the specific language governing permissions and[m
+[32m+[m[32m   limitations under the License.[m
+[1mdiff --git a/README.md b/README.md[m
+[1mnew file mode 100644[m
+[1mindex 0000000..0f845b6[m
+[1m--- /dev/null[m
+[1m+++ b/README.md[m
+[36m@@ -0,0 +1,40 @@[m
+[32m+[m[32m# Getting Started[m
+[32m+[m
+[32m+[m[32m## Prerequisites[m
+[32m+[m
+[32m+[m[32m```sh[m
+[32m+[m[32mpip install kiso[m
+[32m+[m[32m# Install the resource provider specific dependencies you want to use[m
+[32m+[m[32mpip install kiso[vagrant][m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m## Running the experiment[m
+[32m+[m
+[32m+[m[32mPlace any required credentials files in the `secrets` directory.[m
+[32m+[m
+[32m+[m[32m## Running the experiment[m
+[32m+[m
+[32m+[m[32m```sh[m
+[32m+[m[32m# Provision and setup the resources[m
+[32m+[m[32mkiso up --output ./output[m
+[32m+[m
+[32m+[m[32m# Run the experiments defined in the experiment configuration YAML file[m
+[32m+[m[32mkiso run --output ./output[m
+[32m+[m
+[32m+[m[32m# Destroy the provisioned resources[m
+[32m+[m[32mkiso down --output ./output[m
+[32m+[m
+[32m+[m[32m# Pegasus workflow submit directories will be placed in the output directory at the end of the experiment. The submit directories will also have a statistics directory with the pegasus-statistics output.[m
+[32m+[m[32m# Outputs defined in the experiment configuration will be placed to the destination specified in the experiment configuration.[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m# References[m
+[32m+[m
+[32m+[m[32m- [Pegasus Workflow Management System](https://pegasus.isi.edu)[m
+[32m+[m[32m- [EnOSlib](https://discovery.gitlabpages.inria.fr/enoslib/)[m
+[32m+[m[32m- [Chameleon Cloud](https://www.chameleoncloud.org)[m
+[32m+[m[32m- [FABRIC](https://portal.fabric-testbed.net)[m
+[32m+[m
+[32m+[m[32m# Acknowledgements[m
+[32m+[m
+[32m+[m[32mKiso is funded by National Science Foundation (NSF) under award [2403051](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2403051).[m
+[1mdiff --git a/bin/fabric-l2-network.py b/bin/fabric-l2-network.py[m
+[1mnew file mode 100755[m
+[1mindex 0000000..dbbcf3d[m
+[1m--- /dev/null[m
+[1m+++ b/bin/fabric-l2-network.py[m
+[36m@@ -0,0 +1,4 @@[m
+[32m+[m[32m#!/usr/bin/env python3[m
+[32m+[m
+[32m+[m[32mprint("# Configure FABRIC L2 Network")[m
+[32m+[m[32mprint("-----------------------------")[m
+[1mdiff --git a/bin/generate-new-config.sh b/bin/generate-new-config.sh[m
+[1mnew file mode 100755[m
+[1mindex 0000000..24b875d[m
+[1m--- /dev/null[m
+[1m+++ b/bin/generate-new-config.sh[m
+[36m@@ -0,0 +1,6 @@[m
+[32m+[m[32m#!/bin/bash[m
+[32m+[m
+[32m+[m[32mset -e[m
+[32m+[m
+[32m+[m[32mecho "# Generate New Configuration"[m
+[32m+[m[32mecho "----------------------------"[m
+[1mdiff --git a/bin/install-colmena.sh b/bin/install-colmena.sh[m
+[1mnew file mode 100755[m
+[1mindex 0000000..9aa82ee[m
+[1m--- /dev/null[m
+[1m+++ b/bin/install-colmena.sh[m
+[36m@@ -0,0 +1,6 @@[m
+[32m+[m[32m#!/bin/bash[m
+[32m+[m
+[32m+[m[32mset -e[m
+[32m+[m
+[32m+[m[32mecho "# Install Colmena"[m
+[32m+[m[32mecho "-----------------"[m
+[1mdiff --git a/bin/install-redis.sh b/bin/install-redis.sh[m
+[1mnew file mode 100755[m
+[1mindex 0000000..1818fea[m
+[1m--- /dev/null[m
+[1m+++ b/bin/install-redis.sh[m
+[36m@@ -0,0 +1,6 @@[m
+[32m+[m[32m#!/bin/bash[m
+[32m+[m
+[32m+[m[32mset -e[m
+[32m+[m
+[32m+[m[32mecho "# Install Redis"[m
+[32m+[m[32mecho "---------------"[m
+[1mdiff --git a/bin/install-simulation.sh b/bin/install-simulation.sh[m
+[1mnew file mode 100755[m
+[1mindex 0000000..e8fb00d[m
+[1m--- /dev/null[m
+[1m+++ b/bin/install-simulation.sh[m
+[36m@@ -0,0 +1,6 @@[m
+[32m+[m[32m#!/bin/bash[m
+[32m+[m
+[32m+[m[32mset -e[m
+[32m+[m
+[32m+[m[32mecho "# Install Simulation"[m
+[32m+[m[32mecho "--------------------"[m
+[1mdiff --git a/bin/install-swarm.sh b/bin/install-swarm.sh[m
+[1mnew file mode 100755[m
+[1mindex 0000000..8668fe6[m
+[1m--- /dev/null[m
+[1m+++ b/bin/install-swarm.sh[m
+[36m@@ -0,0 +1,6 @@[m
+[32m+[m[32m#!/bin/bash[m
+[32m+[m
+[32m+[m[32mset -e[m
+[32m+[m
+[32m+[m[32mecho "# Install SWARM"[m
+[32m+[m[32mecho "---------------"[m
+[1mdiff --git a/bin/rebuild-config.sh b/bin/rebuild-config.sh[m
+[1mnew file mode 100755[m
+[1mindex 0000000..7c33624[m
+[1m--- /dev/null[m
+[1m+++ b/bin/rebuild-config.sh[m
+[36m@@ -0,0 +1,6 @@[m
+[32m+[m[32m#!/bin/bash[m
+[32m+[m
+[32m+[m[32mset -e[m
+[32m+[m
+[32m+[m[32mecho "# Rebuild with New Configuration"[m
+[32m+[m[32mecho "--------------------------------"[m
+[1mdiff --git a/bin/trigger-simulation.sh b/bin/trigger-simulation.sh[m
+[1mnew file mode 100755[m
+[1mindex 0000000..c1a18a0[m
+[1m--- /dev/null[m
+[1m+++ b/bin/trigger-simulation.sh[m
+[36m@@ -0,0 +1,6 @@[m
+[32m+[m[32m#!/bin/bash[m
+[32m+[m
+[32m+[m[32mset -e[m
+[32m+[m
+[32m+[m[32mecho "# Trigger Simulation"[m
+[32m+[m[32mecho "--------------------"[m
+[1mdiff --git a/bin/wait-for-text.sh b/bin/wait-for-text.sh[m
+[1mnew file mode 100755[m
+[1mindex 0000000..1d515a5[m
+[1m--- /dev/null[m
+[1m+++ b/bin/wait-for-text.sh[m
+[36m@@ -0,0 +1,14 @@[m
+[32m+[m[32m#!/bin/bash[m
+[32m+[m
+[32m+[m[32mTEXT_TO_SEARCH="$1"[m
+[32m+[m
+[32m+[m[32mwhile IFS= read -r line; do[m
+[32m+[m[32m    echo $line | grep "$TEXT_TO_SEARCH" > /dev/null 2>&1[m
+[32m+[m[32m    EC=$?[m
+[32m+[m[32m    if [[ $EC -eq 0 ]]; then[m
+[32m+[m[32m        echo "Found '$TEXT_TO_SEARCH' in '$line'"[m
+[32m+[m[32m        exit 0[m
+[32m+[m[32m    fi[m
+[32m+[m[32mdone[m
+[32m+[m
+[32m+[m[32mexit 1[m
+[1mdiff --git a/experiment.yml b/experiment.yml[m
+[1mnew file mode 100644[m
+[1mindex 0000000..11d1d0c[m
+[1m--- /dev/null[m
+[1m+++ b/experiment.yml[m
+[36m@@ -0,0 +1,142 @@[m
+[32m+[m[32mname: colmena-experiment[m
+[32m+[m
+[32m+[m[32msoftware:[m
+[32m+[m[32m  docker:[m
+[32m+[m[32m    labels:[m
+[32m+[m[32m      - simulation[m
+[32m+[m[32m      - redis[m
+[32m+[m[32m      - colmena[m
+[32m+[m[32m      - swarm[m
+[32m+[m[32m      - trigger[m
+[32m+[m[32m      - llm[m
+[32m+[m
+[32m+[m[32m  # ollama:[m
+[32m+[m[32m  #   labels:[m
+[32m+[m[32m  #     - simulation[m
+[32m+[m[32m  #   models:[m
+[32m+[m[32m  #     - gemma3:270m[m
+[32m+[m
+[32m+[m[32msites:[m
+[32m+[m[32m  - kind: vagrant[m
+[32m+[m[32m    backend: virtualbox[m
+[32m+[m[32m    box: bento/rockylinux-9[m
+[32m+[m[32m    user: vagrant[m
+[32m+[m[32m    config_extra: 'config.vm.synced_folder ".", "/vagrant", disabled: true'[m
+[32m+[m[32m    resources:[m
+[32m+[m[32m      machines:[m
+[32m+[m[32m        - labels:[m
+[32m+[m[32m            - simulation[m
+[32m+[m[32m            - colmena[m
+[32m+[m[32m            - redis[m
+[32m+[m[32m            - llm[m
+[32m+[m[32m          backend: virtualbox[m
+[32m+[m[32m          box: bento/rockylinux-9[m
+[32m+[m[32m          user: vagrant[m
+[32m+[m[32m          config_extra_vm: 'my.vm.synced_folder ".", "/vagrant", disabled: true'[m
+[32m+[m[32m          flavour: "large"[m
+[32m+[m[32m          number: 1[m
+[32m+[m[32m        - labels:[m
+[32m+[m[32m            - colmena[m
+[32m+[m[32m            - swarm[m
+[32m+[m[32m            - trigger[m
+[32m+[m[32m          backend: virtualbox[m
+[32m+[m[32m          box: bento/rockylinux-9[m
+[32m+[m[32m          user: vagrant[m
+[32m+[m[32m          config_extra_vm: 'my.vm.synced_folder ".", "/vagrant", disabled: true'[m
+[32m+[m[32m          flavour: "large"[m
+[32m+[m[32m          number: 1[m
+[32m+[m[32m        - labels:[m
+[32m+[m[32m            - colmena[m
+[32m+[m[32m            - swarm[m
+[32m+[m[32m          backend: virtualbox[m
+[32m+[m[32m          box: bento/rockylinux-9[m
+[32m+[m[32m          user: vagrant[m
+[32m+[m[32m          config_extra_vm: 'my.vm.synced_folder ".", "/vagrant", disabled: true'[m
+[32m+[m[32m          flavour: "large"[m
+[32m+[m[32m          number: 2[m
+[32m+[m[32m      networks:[m
+[32m+[m[32m        - labels:[m
+[32m+[m[32m            - r1[m
+[32m+[m[32m          cidr: "172.16.42.0/16"[m
+[32m+[m
+[32m+[m[32m  # - kind: fabric[m
+[32m+[m[32m  #   rc_file: secrets/fabric_rc[m
+[32m+[m[32m  #   walltime: "02:00:00"[m
+[32m+[m[32m  #   site: UCSD[m
+[32m+[m[32m  #   image: default_rocky_9[m
+[32m+[m[32m  #   resources:[m
+[32m+[m[32m  #     machines:[m
+[32m+[m[32m  #       - labels:[m
+[32m+[m[32m  #           - central-manager[m
+[32m+[m[32m  #           - submit[m
+[32m+[m[32m  #           - execute[m
+[32m+[m[32m  #           - personal[m
+[32m+[m[32m  #         flavour: big[m
+[32m+[m[32m  #         number: 1[m
+[32m+[m
+[32m+[m[32mexperiments:[m
+[32m+[m[32m  - kind: shell[m
+[32m+[m[32m    name: colmena-experiment-1[m
+[32m+[m[32m    description: colmena-experiment-1[m
+[32m+[m[32m    scripts:[m
+[32m+[m[32m      # Install Redis[m
+[32m+[m[32m      - labels:[m
+[32m+[m[32m          - trigger[m
+[32m+[m[32m        script: |[m
+[32m+[m[32m          bin/fabric-l2-network.py[m
+[32m+[m[32m      # Install Redis[m
+[32m+[m[32m      - labels:[m
+[32m+[m[32m          - redis[m
+[32m+[m[32m        script: |[m
+[32m+[m[32m          bin/install-redis.sh[m
+[32m+[m[32m      # Install Simulation[m
+[32m+[m[32m      - labels:[m
+[32m+[m[32m          - simulation[m
+[32m+[m[32m        script: |[m
+[32m+[m[32m          bin/install-simulation.sh[m
+[32m+[m[32m      # Install Colmena[m
+[32m+[m[32m      - labels:[m
+[32m+[m[32m          - colmena[m
+[32m+[m[32m        script: |[m
+[32m+[m[32m          bin/install-colmena.sh[m
+[32m+[m[32m      # Install Swarm[m
+[32m+[m[32m      - labels:[m
+[32m+[m[32m          - swarm[m
+[32m+[m[32m        script: |[m
+[32m+[m[32m          bin/install-swarm.sh[m
+[32m+[m[32m      # Trigger Simulation[m
+[32m+[m[32m      - labels:[m
+[32m+[m[32m          - trigger[m
+[32m+[m[32m        script: |[m
+[32m+[m[32m          bin/trigger-simulation.sh[m
+[32m+[m[32m      # Generate New Configuration[m
+[32m+[m[32m      # - labels:[m
+[32m+[m[32m      #     - llm[m
+[32m+[m[32m      #   script: |[m
+[32m+[m[32m      #     #!/bin/bash[m
+[32m+[m[32m      #     bin/generate-new-config.sh[m
+[32m+[m[32m    # outputs:[m
+[32m+[m[32m    #   - labels:[m
+[32m+[m[32m    #       - trigger[m
+[32m+[m[32m    #     src: alpha[m
+[32m+[m[32m    #     dst: ./[m
+[32m+[m
+[32m+[m[32m  - kind: shell[m
+[32m+[m[32m    name: colmena-experiment-2[m
+[32m+[m[32m    description: colmena-experiment-2[m
+[32m+[m[32m    scripts:[m
+[32m+[m[32m      # Rebuild with New Configuration[m
+[32m+[m[32m      - labels:[m
+[32m+[m[32m          - trigger[m
+[32m+[m[32m        script: |[m
+[32m+[m[32m          bin/rebuild-config.sh[m
+[32m+[m[32m      # Trigger Simulation[m
+[32m+[m[32m      - labels:[m
+[32m+[m[32m          - trigger[m
+[32m+[m[32m        script: |[m
+[32m+[m[32m          bin/trigger-simulation.sh[m
+[32m+[m[32m    # outputs:[m
+[32m+[m[32m    #   - labels:[m
+[32m+[m[32m    #       - simulation[m
+[32m+[m[32m    #     src: ~kiso/[m
+[32m+[m[32m    #     dst: local-machine[m
+[1mdiff --git a/secrets/README.md b/secrets/README.md[m
+[1mnew file mode 100644[m
+[1mindex 0000000..333d03d[m
+[1m--- /dev/null[m
+[1m+++ b/secrets/README.md[m
+[36m@@ -0,0 +1 @@[m
+[32m+[m[32mPlace your credential files here. This folder is ignore in .gitignore so they won't inadvertently be pushed to GitHub.[m

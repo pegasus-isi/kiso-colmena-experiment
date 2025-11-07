@@ -15,5 +15,5 @@ cd $HOME/eroots_bundle
 git checkout swarm
 
 DIR="$HOME/eroots_bundle"
-docker run -d --name andes -p 5000:5000 -v "$DIR"/eroots/config.py:/home/colmenasrc/config/config.py -v "$DIR"/eroots/output_plots:/home/output_plots xaviercasasbsc/andes_src
+docker run -d --name andes --network=host -v "$DIR"/eroots/config.py:/home/colmenasrc/config/config.py -v "$DIR"/eroots/output_plots:/home/output_plots xaviercasasbsc/andes_src
 $HOME/kiso-colmena-experiment/bin/wait-for-docker-log.sh andes "[Loop]"
