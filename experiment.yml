@@ -19,8 +19,8 @@ sites:
       machines:
         - labels:
             - simulation
-            - colmena
             - redis
+            - wait
           backend: virtualbox
           box: bento/rockylinux-9
           user: vagrant
@@ -32,21 +32,22 @@ sites:
             - swarm
             - trigger
             - random
+            - kpis
           backend: virtualbox
           box: bento/rockylinux-9
           user: vagrant
           config_extra_vm: 'my.vm.synced_folder ".", "/vagrant", disabled: true'
           flavour: "large"
           number: 1
-        #- labels:
-        #    - colmena
-        #    - swarm
-        #  backend: virtualbox
-        #  box: bento/rockylinux-9
-        #  user: vagrant
-         # config_extra_vm: 'my.vm.synced_folder ".", "/vagrant", disabled: true'
-        #  flavour: "large"
-        #  number: 2
+        - labels:
+            - colmena
+            - swarm
+          backend: virtualbox
+          box: bento/rockylinux-9
+          user: vagrant
+          config_extra_vm: 'my.vm.synced_folder ".", "/vagrant", disabled: true'
+          flavour: "large"
+          number: 2
       networks:
         - labels:
             - r1
@@ -79,6 +80,8 @@ experiments:
           - simulation
           - colmena
           - swarm
+          - wait
+          - kpis
         script: |
           sudo dnf -y install git
       #- labels:
@@ -89,40 +92,68 @@ experiments:
       - labels:
           - redis
         script: |
+          bin/docker-login.sh xaviercasasbsc
           bin/launch-redis.sh
       # Install Simulation
       - labels:
           - simulation
+        # Host names should be included previously, this is a temporal solution
         script: |
-          bin/launch-simulation.sh
+          grep -qE '(^|\s)andes(\s|$)' /etc/hosts || echo "192.168.157.245 andes" | sudo tee -a /etc/hosts > /dev/null 
+          export AGENT_NUM=0
+          export AGENT_AREA=0
+          mkdir -p logs
+          bin/launch-simulation.sh example_config/config.py ~/output_plots | tee logs/launch-simulation.log
+          bin/launch-colmena.sh --hardware SIMULATOR --policy eager --config-path example_config/ | tee logs/launch-colmena.log
       # Install Colmena
       - labels:
           - colmena
         script: |
-          bin/launch-colmena.sh
+          bin/docker-login.sh xaviercasasbsc
+          bin/pull-images.sh xaviercasasbsc/distributed_mpc:0.1 xaviercasasbsc/monitoringrole:0.1 xaviercasasbsc/simulationmanager:0.1
+          grep -qE '(^|\s)andes(\s|$)' /etc/hosts || echo "192.168.157.245 andes" | sudo tee -a /etc/hosts > /dev/null
+          export AGENT_NUM=1
+          export AGENT_AREA=1
+          mkdir -p logs
+          bin/launch-colmena.sh --hardware AREA --policy consensus --config-path example_config/ | tee logs/launch-colmena.log
       # Install Swarm
       - labels:
           - swarm
         script: |
-          bin/launch-swarm.sh
+          export AGENT_NUM=1
+          mkdir -p logs
+          grep -qE '(^|\s)andes(\s|$)' /etc/hosts || echo "192.168.57.245 andes" | sudo tee -a /etc/hosts > /dev/null
+          bin/launch-swarm.sh 18 3 6 example_config/ | tee logs/launch-swarm.log
       # Execute random process
       - labels:
           - random
         script: |
-          bin/execute-random.sh
+          mkdir -p logs
+          bin/execute-random.sh | tee logs/random.log
       # Trigger Simulation
       - labels:
           - trigger
         script: |
-          bin/build-and-deploy.sh
-    #outputs:
-    #   - labels:
-    #       - redis
-    #     src: redis.log
-    #     dst: ./
-
-    # outputs:
-    #   - labels:
-    #       - simulation
-    #     src: ~kiso/
-    #     dst: local-machine
+          export AGENT_NUM=1
+          export AGENT_AREA=1
+          mkdir -p logs
+          cat secrets/docker_token.txt | docker login -u xaviercasasbsc --password-stdin
+          bin/build-images.sh example_config/ xaviercasasbsc | tee logs/build.log
+          bin/deploy.sh example_config/ xaviercasasbsc AgentControl | tee logs/deploy.log
+      - labels:
+          - wait
+        scripts:
+          bin/wait-for-simulation.sh
+      - labels:
+          - kpis
+        scripts:
+          bin/fetch-kpi-timeline.sh
+    outputs:
+      - labels:
+          - simulation
+        src: output_plots/
+        dst: output/simulation/
+      - labels:
+          - trigger
+        src: ~/logs.txt
+        dst: output/kpi_logs.txt

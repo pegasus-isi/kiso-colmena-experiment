@@ -1,36 +1,47 @@
-echo "# Install Colmena"
-echo "-----------------"
+#!/bin/bash
+set -e
 
 ZENOH_ROUTER_IP="172.17.0.1"
-ENDPOINT="tcp://localhost:7447"
+ENDPOINT="172.17.0.1:20000"
 
-# Parse arguments
+# --- Parse arguments ---
+CONFIG_PATH=""
 while [[ "$#" -gt 0 ]]; do
   case $1 in
     --hardware) HARDWARE="$2"; shift ;;
-    --agent) AGENT_ID="$2"; shift ;;
     --policy) POLICY="$2"; shift ;;
+    --config-path) CONFIG_PATH="$2"; shift ;;
     *) echo "Unknown parameter passed: $1"; exit 1 ;;
   esac
   shift
 done
 
-# Validate required params
-if [[ -z "$HARDWARE" || -z "$AGENT_ID" || -z "$POLICY" ]]; then
-  echo "Usage: $0 --hardware <value> --agent <value> --policy <value>"
+# --- Validate required params ---
+if [[ -z "$HARDWARE" || -z "$POLICY" || -z "$CONFIG_PATH" ]]; then
+  echo "Usage: $0 --hardware <value> --policy <value> --config-path <path-to-example_config>"
+  echo
+  echo "Note: Environment variables AGENT_NUM and AGENT_AREA must be set."
+  echo "Example:"
+  echo "  export AGENT_NUM=1"
+  echo "  export AGENT_AREA=3"
+  echo "  ./launch_colmena.sh --hardware GPU --policy test --config-path example_config/"
   exit 1
 fi
 
-
-if [ ! -d $HOME/eroots_bundle ]; then
-  TOKEN_FILE="$HOME/kiso-colmena-experiment/secrets/gitlab_token.txt"
-  TOKEN=$(cat "$TOKEN_FILE" | tr -d ' \n')
-  REPO_URL="https://xcasas:${TOKEN}@gitlab.bsc.es/wdc/projects/colmena-group/applications/eroots_bundle.git"
-        git clone "$REPO_URL" $HOME/eroots_bundle
+# --- Validate required environment variables ---
+if [[ -z "$AGENT_NUM" || -z "$AGENT_AREA" ]]; then
+  echo "Error: AGENT_NUM and AGENT_AREA environment variables are required."
+  echo "Example: export AGENT_NUM=1; export AGENT_AREA=3"
+  exit 1
 fi
-cd $HOME/eroots_bundle
-git checkout swarm
-cd agent
+
+# --- Build AGENT_ID dynamically ---
+AGENT_ID="agent_${AGENT_NUM}_${AGENT_AREA}"
+echo "Agent ID: $AGENT_ID"
+
+# --- Launch ---
+pwd
+cd $CONFIG_PATH/agent
 
 docker compose -f compose-zenoh.yaml up -d
 

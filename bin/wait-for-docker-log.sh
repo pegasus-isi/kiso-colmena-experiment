@@ -14,4 +14,4 @@ docker logs -f "$CONTAINER" 2>&1 | while read -r line; do
         exit 0
     fi
 done
-
+exit 0

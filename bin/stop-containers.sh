@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-# List all running container IDs
-containers=$(docker ps -q)
+# List all container IDs
+containers=$(docker ps -q -a)
 
 if [ -z "$containers" ]; then
     echo "No running containers."

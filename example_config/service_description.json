@@ -1,0 +1,46 @@
+{
+  "id": {
+    "value": "AgentControl"
+  },
+  "dockerContextDefinitions": [
+    {
+      "id": "grid_areas",
+      "imageId": "grid_areas:0.1"
+    },
+    {
+      "id": "all_global",
+      "imageId": "all_global:0.1"
+    }
+  ],
+  "kpis": [],
+  "dockerRoleDefinitions": [
+    {
+      "id": "Distributed_MPC",
+      "imageId": "distributed_mpc:0.1",
+      "hardwareRequirements": [
+        "AREA"
+      ],
+      "kpis": [
+        {
+          "query": "abs(avg(avg_over_time(agentcontrol_frequency[5s])) - 1) < 0.001"
+        }
+      ]
+    },
+    {
+      "id": "MonitoringRole",
+      "imageId": "monitoringrole:0.1",
+      "hardwareRequirements": [
+        "AREA"
+      ],
+      "kpis": []
+    },
+    {
+      "id": "SimulationManager",
+      "imageId": "simulationmanager:0.1",
+      "hardwareRequirements": [
+        "SIMULATOR"
+      ],
+      "kpis": []
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+FROM xaviercasasbsc/distributed_mpc:0.0
+WORKDIR /home
+
+COPY config.py /home/colmenasrc/config/config.py
