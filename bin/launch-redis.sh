@@ -5,11 +5,11 @@ set -e
 echo "# Install Redis"
 echo "---------------"
 
-if [ ! -d /home/kiso/SwarmAgents ]; then
-	git clone https://github.com/xcasas/SwarmAgents.git /home/kiso/SwarmAgents
+if [ ! -d $HOME/SwarmAgents ]; then
+	git clone https://github.com/xcasas/SwarmAgents.git $HOME/SwarmAgents
 fi
-cd /home/kiso/SwarmAgents
+cd $HOME/SwarmAgents
 git checkout colmena-new
 
 docker compose up -d redis
-/home/kiso/kiso-colmena-experiment/bin/wait-for-docker-log.sh redis "Ready"
+$HOME/kiso-colmena-experiment/bin/wait-for-docker-log.sh redis "Ready"

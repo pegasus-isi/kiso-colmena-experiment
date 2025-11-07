@@ -16,4 +16,4 @@ docker run -d --name random --network host ubuntu:latest bash -c '
 
   stress --vm 1 --vm-bytes "${RAM_MB}M" --vm-hang 0'
 
-~/kiso-colmena-experiment/bin/wait-for-docker-log.sh random "Allocating"
+$HOME/kiso-colmena-experiment/bin/wait-for-docker-log.sh random "Allocating"

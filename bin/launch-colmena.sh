@@ -7,13 +7,13 @@ POLICY="lazy"
 ZENOH_ROUTER_IP="172.17.0.1"
 ENDPOINT="tcp://localhost:7447"
 
-if [ ! -d /home/kiso/eroots_bundle ]; then
-  TOKEN_FILE="/home/kiso/kiso-colmena-experiment/secrets/gitlab_token.txt"
+if [ ! -d $HOME/eroots_bundle ]; then
+  TOKEN_FILE="$HOME/kiso-colmena-experiment/secrets/gitlab_token.txt"
   TOKEN=$(cat "$TOKEN_FILE" | tr -d ' \n')
   REPO_URL="https://xcasas:${TOKEN}@gitlab.bsc.es/wdc/projects/colmena-group/applications/eroots_bundle.git"
-        git clone "$REPO_URL" /home/kiso/eroots_bundle
+        git clone "$REPO_URL" $HOME/eroots_bundle
 fi
-cd /home/kiso/eroots_bundle
+cd $HOME/eroots_bundle
 git checkout swarm
 cd agent
 
@@ -26,7 +26,7 @@ ZENOH_ROUTER="$ZENOH_ROUTER_IP" \
 ENDPOINT="$ENDPOINT" \
 docker compose -p "$AGENT_ID" -f compose.yaml up -d
 
-BASE="/home/kiso/kiso-colmena-experiment/bin"
+BASE="$HOME/kiso-colmena-experiment/bin"
 
 $BASE/wait-for-docker-log.sh zenoh-zenoh-router-1 "Register resource colmena_service_definitions/*" &
 $BASE/wait-for-docker-log.sh "$AGENT_ID"-zenoh-client-1 "Finished getting published service definitions" &
