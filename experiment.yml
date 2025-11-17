@@ -102,9 +102,8 @@ experiments:
           grep -qE '(^|\s)andes(\s|$)' /etc/hosts || echo "192.168.157.245 andes" | sudo tee -a /etc/hosts > /dev/null 
           export AGENT_NUM=0
           export AGENT_AREA=0
-          mkdir -p logs
-          bin/launch-simulation.sh example_config/config.py ~/output_plots | tee logs/launch-simulation.log
-          bin/launch-colmena.sh --hardware SIMULATOR --policy eager --config-path example_config/ | tee logs/launch-colmena.log
+          bin/launch-simulation.sh example_config/config.py ~/output_plots 
+          bin/launch-colmena.sh --hardware SIMULATOR --policy eager --config-path example_config/
       # Install Colmena
       - labels:
           - colmena
@@ -114,32 +113,28 @@ experiments:
           grep -qE '(^|\s)andes(\s|$)' /etc/hosts || echo "192.168.157.245 andes" | sudo tee -a /etc/hosts > /dev/null
           export AGENT_NUM=1
           export AGENT_AREA=1
-          mkdir -p logs
-          bin/launch-colmena.sh --hardware AREA --policy consensus --config-path example_config/ | tee logs/launch-colmena.log
+          bin/launch-colmena.sh --hardware AREA --policy consensus --config-path example_config/
       # Install Swarm
       - labels:
           - swarm
         script: |
           export AGENT_NUM=1
-          mkdir -p logs
           grep -qE '(^|\s)andes(\s|$)' /etc/hosts || echo "192.168.57.245 andes" | sudo tee -a /etc/hosts > /dev/null
-          bin/launch-swarm.sh 18 3 6 example_config/ | tee logs/launch-swarm.log
+          bin/launch-swarm.sh 18 3 6 example_config/
       # Execute random process
       - labels:
           - random
         script: |
-          mkdir -p logs
-          bin/execute-random.sh | tee logs/random.log
+          bin/execute-random.sh
       # Trigger Simulation
       - labels:
           - trigger
         script: |
           export AGENT_NUM=1
           export AGENT_AREA=1
-          mkdir -p logs
           cat secrets/docker_token.txt | docker login -u xaviercasasbsc --password-stdin
-          bin/build-images.sh example_config/ xaviercasasbsc | tee logs/build.log
-          bin/deploy.sh example_config/ xaviercasasbsc AgentControl | tee logs/deploy.log
+          bin/build-images.sh example_config/ xaviercasasbsc
+          bin/deploy.sh example_config/ xaviercasasbsc AgentControl
       - labels:
           - wait
         scripts:
