@@ -9,4 +9,4 @@ perl -ne 'if (/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z).*?Value:\s*([0-9]+(?
     $ts=$1; $val=$2;
     chomp($epoch=`date -d "$ts" +"%s%3N"`);
     print "$epoch $val\n";
-}' $HOME/logs.txt
+}' $HOME/logs.txt > $HOME/logs_parsed.txt
