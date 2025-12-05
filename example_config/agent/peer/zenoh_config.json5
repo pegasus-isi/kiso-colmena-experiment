@@ -2,7 +2,7 @@
   mode: "peer",
   connect: {
     //entry point to cluster/network i.e "tcp/192.168.10.10:7447"
-    endpoints: []
+    endpoints: ["tcp/agent-1:7447"]
   },
   scouting: {
     gossip: {
