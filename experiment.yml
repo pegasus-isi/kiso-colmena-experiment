@@ -10,22 +10,18 @@ software:
       - trigger
 
 sites:
-  - kind: vagrant
-    backend: virtualbox
-    box: bento/rockylinux-9
-    user: vagrant
-    config_extra: 'config.vm.synced_folder ".", "/vagrant", disabled: true'
+  - kind: fabric
+    rc_file: secrets/fabric_rc
+    walltime: "02:00:00"
     resources:
       machines:
         - labels:
             - simulation
             - redis
             - wait
-          backend: virtualbox
-          box: bento/rockylinux-9
-          user: vagrant
-          config_extra_vm: 'my.vm.synced_folder ".", "/vagrant", disabled: true'
-          flavour: "large"
+          site: HAWI
+          image: docker_ubuntu_22
+          flavour: small
           number: 1
         - labels:
             - colmena
@@ -33,40 +29,222 @@ sites:
             - trigger
             - random
             - kpis
-          backend: virtualbox
-          box: bento/rockylinux-9
-          user: vagrant
-          config_extra_vm: 'my.vm.synced_folder ".", "/vagrant", disabled: true'
-          flavour: "large"
+          site: WASH
+          image: docker_ubuntu_22
+          flavour: small
           number: 1
         - labels:
             - colmena
             - swarm
-          backend: virtualbox
-          box: bento/rockylinux-9
-          user: vagrant
-          config_extra_vm: 'my.vm.synced_folder ".", "/vagrant", disabled: true'
-          flavour: "large"
-          number: 2
-      networks:
+          site: WASH
+          image: docker_ubuntu_22
+          flavour: small
+          number: 1
         - labels:
-            - r1
-          cidr: "192.168.57.0/24"
+            - colmena
+            - swarm
+          site: WASH
+          image: docker_ubuntu_22
+          flavour: small
+          number: 3
+        - labels:
+            - colmena
+            - swarm
+          site: FIU
+          image: docker_ubuntu_22
+          flavour: small
+          number: 3
+        #- labels:
+        #    - colmena
+        #    - swarm
+        #  site: BRIST
+        #  image: docker_ubuntu_22
+        #  flavour: small
+        #  number: 3
+        #- labels:
+        #    - colmena
+        #    - swarm
+        #  site: LOSA
+        #  image: docker_ubuntu_22
+        #  flavour: small
+        #  number: 3
+        #- labels:
+        #    - colmena
+        #    - swarm
+        #  site: STAR
+        #  image: docker_ubuntu_22
+        #  flavour: small
+        #  number: 3
+      networks:
+        # -------------
+        # IPv4 L2Bridge
+        # -------------
+        - labels:
+            - v4
+          kind: L2Bridge
+          site: WASH
+          nic:
+            kind: SharedNIC
+            model: ConnectX-6
+        - labels:
+            - v4
+          kind: L2Bridge
+          site: HAWI
+          nic:
+            kind: SharedNIC
+            model: ConnectX-6
+        - labels:
+            - v4
+          kind: L2Bridge
+          site: FIU
+          nic:
+            kind: SharedNIC
+            model: ConnectX-6
+        #- labels:
+        #    - v4
+        #  kind: L2Bridge
+        #  site: BRIST
+        #  nic:
+        #    kind: SharedNIC
+        #    model: ConnectX-6
+        #- labels:
+        #    - v4
+        #  kind: L2Bridge
+        #  site: LOSA
+        #  nic:
+        #    kind: SharedNIC
+        #    model: ConnectX-6
+        #- labels:
+        #    - v4
+        #  kind: L2Bridge
+        #  site: STAR
+        #  nic:
+        #    kind: SharedNIC
+        #    model: ConnectX-6
 
-  # - kind: fabric
-  #   rc_file: secrets/fabric_rc
-  #   walltime: "02:00:00"
-  #   site: UCSD
-  #   image: default_rocky_9
-  #   resources:
-  #     machines:
-  #       - labels:
-  #           - central-manager
-  #           - submit
-  #           - execute
-  #           - personal
-  #         flavour: big
-  #         number: 1
+        # ----------
+        # IPv4 L2STS
+        # ----------
+        - labels:
+            - v4
+          kind: L2STS
+          site_1: WASH
+          site_2: HAWI
+          nic:
+            kind: SharedNIC
+            model: ConnectX-6
+        - labels:
+            - v4
+          kind: L2STS
+          site_1: WASH
+          site_2: FIU
+          nic:
+            kind: SharedNIC
+            model: ConnectX-6
+       # - labels:
+       #     - v4
+       #   kind: L2STS
+       #   site_1: WASH
+       #   site_2: BRIST
+       #   nic:
+       #     kind: SharedNIC
+       #     model: ConnectX-6
+       # - labels:
+       #     - v4
+       #   kind: L2STS
+       #   site_1: WASH
+       #   site_2: LOSA
+       #   nic:
+       #     kind: SharedNIC
+       #     model: ConnectX-6
+       # - labels:
+       #     - v4
+       #   kind: L2STS
+       #   site_1: WASH
+       #   site_2: STAR
+       #   nic:
+       #     kind: SharedNIC
+       #     model: ConnectX-6
+        - labels:
+            - v4
+          kind: L2STS
+          site_1: HAWI
+          site_2: FIU
+          nic:
+            kind: SharedNIC
+            model: ConnectX-6
+        #- labels:
+        #    - v4
+        #  kind: L2STS
+        #  site_1: HAWI
+        #  site_2: BRIST
+        #  nic:
+        #    kind: SharedNIC
+        #    model: ConnectX-6
+        #- labels:
+        #    - v4
+        #  kind: L2STS
+        #  site_1: HAWI
+        #  site_2: LOSA
+        #  nic:
+        #    kind: SharedNIC
+        #    model: ConnectX-6
+        #- labels:
+        #    - v4
+        #  kind: L2STS
+        #  site_1: HAWI
+        #  site_2: STAR
+        #  nic:
+        #    kind: SharedNIC
+        #    model: ConnectX-6
+        #- labels:
+        #    - v4
+        #  kind: L2STS
+        #  site_1: FIU
+        #  site_2: BRIST
+        #  nic:
+        #    kind: SharedNIC
+        #    model: ConnectX-6
+        #- labels:
+        #    - v4
+        #  kind: L2STS
+        #  site_1: FIU
+        #  site_2: LOSA
+        #  nic:
+        #    kind: SharedNIC
+        #    model: ConnectX-6
+        #- labels:
+        #    - v4
+        #  kind: L2STS
+        #  site_1: FIU
+        #  site_2: STAR
+        #  nic:
+        #    kind: SharedNIC
+        #    model: ConnectX-6
+        #- labels:
+        #    - v4
+        #  kind: L2STS
+        #  site_1: BRIST
+        #  site_2: LOSA
+        #  nic:
+        #    kind: SharedNIC
+        #    model: ConnectX-6
+        #- labels:
+        #    - v4
+        #  kind: L2STS
+        #  site_1: BRIST
+        #  site_2: STAR
+        #  nic:
+        #    kind: SharedNIC
+        #    model: ConnectX-6
+        #- labels:
+        #    - v4
+        #  kind: L2STS
+        #  site_1: LOSA
+        #  site_2: STAR
+        #  nic:
+        #    kind: SharedNIC
+        #    model: ConnectX-6
 
 experiments:
   - kind: shell
@@ -137,11 +315,11 @@ experiments:
           bin/deploy.sh example_config/ xaviercasasbsc AgentControl
       - labels:
           - wait
-        scripts:
+        script: |
           bin/wait-for-simulation.sh
       - labels:
           - kpis
-        scripts:
+        script: |
           bin/fetch-kpi-timeline.sh
     outputs:
       - labels:
@@ -150,5 +328,5 @@ experiments:
         dst: output/simulation/
       - labels:
           - trigger
-        src: ~/logs.txt
+        src: /home/ubuntu/logs.txt
         dst: output/kpi_logs.txt

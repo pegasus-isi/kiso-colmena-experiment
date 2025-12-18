@@ -41,11 +41,3 @@ LOGFILE="$HOME/SwarmAgents/swarm-multi/agent-${AGENT_NUM}.log"
 python3 "${HOME}/SwarmAgents/main.py" "$AGENT_NUM" \
     --config "$HOME/SwarmAgents/configs/$CONFIG_FILE" \
     --agent-type colmena --debug &
-
-# Wait for the log file to be created
-while [ ! -f "$LOGFILE" ]; do
-    sleep 1
-done
-
-# Wait until the text appears
-$HOME/kiso-colmena-experiment/bin/wait-for-text.sh "$LOGFILE" "Starting colmena agent"
