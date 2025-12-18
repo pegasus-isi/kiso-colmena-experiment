@@ -38,6 +38,9 @@ python3 -m generate_configs "$NUM_AGENTS" "$AGENTS_PER_GROUP" \
 
 LOGFILE="$HOME/SwarmAgents/swarm-multi/agent-${AGENT_NUM}.log"
 
-python3 "${HOME}/SwarmAgents/main.py" "$AGENT_NUM" \
+nohup python3 -u "${HOME}/SwarmAgents/main.py" "$AGENT_NUM" \
     --config "$HOME/SwarmAgents/configs/$CONFIG_FILE" \
-    --agent-type colmena --debug &
+    --agent-type colmena --debug \
+    > "$LOGFILE" 2>&1 </dev/null &
+
+disown
