@@ -50,7 +50,7 @@ sites:
         - labels:
             - colmena
             - swarm
-          site: FIU
+          site: UTAH
           image: docker_ubuntu_22
           flavour: small
           number: 3
@@ -96,7 +96,7 @@ sites:
         - labels:
             - v4
           kind: L2Bridge
-          site: FIU
+          site: UTAH
           nic:
             kind: SharedNIC
             model: ConnectX-6
@@ -137,7 +137,7 @@ sites:
             - v4
           kind: L2STS
           site_1: WASH
-          site_2: FIU
+          site_2: UTAH
           nic:
             kind: SharedNIC
             model: ConnectX-6
@@ -169,7 +169,7 @@ sites:
             - v4
           kind: L2STS
           site_1: HAWI
-          site_2: FIU
+          site_2: UTAH
           nic:
             kind: SharedNIC
             model: ConnectX-6
@@ -200,7 +200,7 @@ sites:
         #- labels:
         #    - v4
         #  kind: L2STS
-        #  site_1: FIU
+        #  site_1: UTAH
         #  site_2: BRIST
         #  nic:
         #    kind: SharedNIC
@@ -208,7 +208,7 @@ sites:
         #- labels:
         #    - v4
         #  kind: L2STS
-        #  site_1: FIU
+        #  site_1: UTAH
         #  site_2: LOSA
         #  nic:
         #    kind: SharedNIC
@@ -216,7 +216,7 @@ sites:
         #- labels:
         #    - v4
         #  kind: L2STS
-        #  site_1: FIU
+        #  site_1: UTAH
         #  site_2: STAR
         #  nic:
         #    kind: SharedNIC

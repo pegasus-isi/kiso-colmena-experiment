@@ -11,7 +11,7 @@ docker run -d --name random --network host ubuntu:latest bash -c '
   apt update -qq
   apt install -y -qq stress
 
-  RAM_MB=$((RANDOM % 5000))
+  RAM_MB=$((RANDOM % 500))
   echo "Allocating ${RAM_MB} MB of RAM"
 
   stress --vm 1 --vm-bytes "${RAM_MB}M" --vm-hang 0'
