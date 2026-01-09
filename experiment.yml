@@ -32,7 +32,6 @@ sites:
           number: 3
         - labels:
             - simulation
-            - colmena
             - redis
             - wait
             - trigger
@@ -69,84 +68,67 @@ experiments:
     description: colmena-experiment-1
     scripts:
       - labels:
-          - redis
-          - simulation
           - colmena
-          - swarm
-          - trigger
-          - wait
-          - kpis
         script: |
-          sudo dnf -y install git
           sudo tee -a /etc/hosts < secrets/hosts
-          sudo usermod -aG docker $USER
-          newgrp docker
+          bin/export-agent-vars.sh
       - labels:
-          - colmena
+          - simulation
         script: |
-          AGENT_AREA=$(hostname | sed -n 's/.*-m\([0-9]\+\)-.*/\1/p')
-          AGENT_NUM=$(hostname  | sed -n 's/.*-n\([0-9]\+\)$/\1/p')
-
-          # Apply special rule: if m==4, set both to 0
-          if [[ "$AGENT_AREA" == "4" ]]; then
-          AGENT_AREA=0
-          AGENT_NUM=0
-          fi
-          
-          echo $AGENT_AREA > secrets/agent_area 
-          echo $AGENT_NUM > secrets/agent_num
+          sudo tee -a /etc/hosts < secrets/hosts
+          bin/export-agent-vars.sh
       - labels:
           - redis
         script: |
           bin/docker-login.sh xaviercasasbsc
           bin/launch-redis.sh
-      # Install Simulation
       - labels:
           - simulation
         script: |
-          grep -qE '(^|\s)andes(\s|$)' /etc/hosts || echo "192.168.157.245 andes" | sudo tee -a /etc/hosts > /dev/null 
+          bin/add-andes.sh
           export AGENT_NUM=0
           export AGENT_AREA=0
-          bin/launch-simulation.sh example_config/config.py ~/output_plots 
+          bin/launch-simulation.sh example_config/config.py ~/output_plots
+          bin/zenoh-config.sh example_config/agent/zenoh-router/zenohd-config.json5
+          bin/docker-login.sh xaviercasasbsc
           bin/launch-colmena.sh --hardware SIMULATOR --policy eager --config-path example_config/
-      # Install Colmena
       - labels:
           - colmena
-        script: | 
+        script: |
+          bin/add-andes.sh
           bin/zenoh-config.sh example_config/agent/zenoh-router/zenohd-config.json5
           bin/docker-login.sh xaviercasasbsc
           bin/pull-images.sh xaviercasasbsc/distributed_mpc:0.1 xaviercasasbsc/monitoringrole:0.1 xaviercasasbsc/simulationmanager:0.1
-          grep -qE '(^|\s)andes(\s|$)' /etc/hosts || echo "192.168.157.245 andes" | sudo tee -a /etc/hosts > /dev/null
           export AGENT_AREA=$(cat secrets/agent_area)
           export AGENT_NUM=$(cat secrets/agent_num)
           bin/launch-colmena.sh --hardware AREA --policy consensus --config-path example_config/
       # Install Swarm
-      - labels:
-          - swarm
-        script: |
-          export AGENT_NUM=$(cat secrets/agent_num)
-          grep -qE '(^|\s)andes(\s|$)' /etc/hosts || echo "192.168.57.245 andes" | sudo tee -a /etc/hosts > /dev/null
-          bin/launch-swarm.sh 18 3 6 example_config/
+      #- labels:
+       #   - swarm
+       # script: |
+       #   export AGENT_NUM=$(cat secrets/agent_num)
+       #   grep -qE '(^|\s)andes(\s|$)' /etc/hosts || echo "192.168.57.245 andes" | sudo tee -a /etc/hosts > /dev/null
+       #   bin/launch-swarm.sh 18 3 6 example_config/
       # Execute random process
-      - labels:
-          - random
-        script: |
-          bin/execute-random.sh
+      #- labels:
+      #    - random
+      #  script: |
+      #    bin/execute-random.sh
       # Trigger Simulation
-      - labels:
-          - trigger
-        script: |
-          cat secrets/docker_token.txt | docker login -u xaviercasasbsc --password-stdin
-          bin/build-images.sh example_config/ xaviercasasbsc
-          bin/deploy.sh example_config/ xaviercasasbsc AgentControl
-      - labels:
-          - wait
-        script: |
-          bin/wait-for-simulation.sh
-      - labels:
-          - kpis
-        script: |
-          bin/fetch-kpi-timeline.sh
+      #- labels:
+      #    - trigger
+      #  script: |
+      #    cat secrets/docker_token.txt | docker login -u xaviercasasbsc --password-stdin
+      #    bin/build-images.sh example_config/ xaviercasasbsc
+      #    bin/deploy.sh example_config/ xaviercasasbsc AgentControl
+      #- labels:
+      #    - wait
+      #  script: |
+      #    bin/wait-for-simulation.sh
+      #- labels:
+      #    - kpis
+      #  script: |
+      #    bin/fetch-kpi-timeline.sh
     outputs:
       - labels:
           - simulation

@@ -5,6 +5,9 @@ set -e
 echo "# Docker login"
 echo "--------------------"
 
+sudo usermod -aG docker $USER
+newgrp docker
+
 DOCKER_USER="$1"
 
 # --- Validate inputs ---
@@ -14,4 +17,7 @@ if [ -z "$DOCKER_USER" ] ; then
 fi
 
 
-cat ~/kiso-colmena-experiment/secrets/dockerhub_login.txt | docker login --username ${DOCKER_USER} --password-stdin
+docker login \
+  --username "$DOCKER_USER" \
+  --password-stdin \
+  < ~/kiso-colmena-experiment/secrets/docker_token.txt
