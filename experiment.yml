@@ -4,6 +4,7 @@ sites:
   - kind: fabric
     rc_file: secrets/fabric_rc
     walltime: "02:00:00"
+    name_prefix: colmena
     resources:
       machines:
         - labels:
@@ -12,7 +13,10 @@ sites:
             - random
           site: WASH
           image: docker_ubuntu_22
-          flavour: small
+          flavour_desc:
+            core: 1
+            mem: 1
+            disk: 20
           number: 3
         - labels:
             - colmena
@@ -20,7 +24,10 @@ sites:
             - random
           site: HAWI
           image: docker_ubuntu_22
-          flavour: small
+          flavour_desc:
+            core: 1
+            mem: 1
+            disk: 20
           number: 3
         - labels:
             - colmena
@@ -28,7 +35,10 @@ sites:
             - random
           site: UTAH
           image: docker_ubuntu_22
-          flavour: small
+          flavour_desc:
+            core: 1
+            mem: 1
+            disk: 20
           number: 3
         - labels:
             - simulation
@@ -38,7 +48,10 @@ sites:
             - kpis
           site: WASH
           image: docker_ubuntu_22
-          flavour: small
+          flavour_desc:
+            core: 1
+            mem: 1
+            disk: 20
           number: 1
       networks:
         - labels:
@@ -62,6 +75,7 @@ sites:
           nic:
             kind: SharedNIC
             model: ConnectX-6
+
 experiments:
   - kind: shell
     name: colmena-experiment-1
@@ -69,10 +83,11 @@ experiments:
     scripts:
       - labels:
           - colmena
+          - simulation
         script: |
-          sudo -n tee -a /etc/hosts < secrets/hosts
-          bin/export-agent-vars.sh
+          sudo usermod -a -G docker kiso
       - labels:
+          - colmena
           - simulation
         script: |
           sudo -n tee -a /etc/hosts < secrets/hosts
@@ -135,4 +150,4 @@ experiments:
       - labels:
           - trigger
         src: /home/ubuntu/logs.txt
-        dst: output/kpi_logs.txt
+        dst: output/kpi_logs/

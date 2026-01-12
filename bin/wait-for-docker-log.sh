@@ -1,11 +1,10 @@
 #!/bin/bash
-set -e
 
 CONTAINER="$1"
 SEARCH="$2"
 
 # Start docker logs in background and capture its PID
-sudo -n docker logs -f "$CONTAINER" 2>&1 | while read -r line; do
+docker logs -f "$CONTAINER" 2>&1 | while read -r line; do
     echo "$line"
 
     if [[ "$line" == *"$SEARCH"* ]]; then
