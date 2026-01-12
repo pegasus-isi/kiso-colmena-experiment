@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -ex
 
 echo "# Install Simulation"
 echo "--------------------"
@@ -27,28 +27,20 @@ fi
 
 mkdir -p "$OUTPUT_PATH"
 
-# --- Ensure 'andes' is in /etc/hosts ---
-if ! grep -qE '^[[:space:]]*127\.0\.0\.1[[:space:]]+andes(\s|$)' /etc/hosts; then
-  echo "Adding '127.0.0.1 andes' to /etc/hosts"
-  echo "127.0.0.1 andes" | sudo tee -a /etc/hosts > /dev/null
-else
-  echo "'andes' already present in /etc/hosts"
-fi
-
 # --- Remove any existing container ---
-if docker ps -a --format '{{.Names}}' | grep -q "^${DOCKER_NAME}\$"; then
+if sudo -n docker ps -a --format '{{.Names}}' | grep -q "^${DOCKER_NAME}\$"; then
   echo "Removing existing container: $DOCKER_NAME"
-  docker rm -f "$DOCKER_NAME"
+  sudo -n docker rm -f "$DOCKER_NAME"
 fi
 
 # --- Run simulation container ---
 echo "Starting Docker container: $DOCKER_NAME"
-docker run -d \
+sudo -n docker run -d \
   --name "$DOCKER_NAME" \
   --network=host \
   -v "$CONFIG_PATH":/home/colmenasrc/config/config.py \
   -v "$OUTPUT_PATH":/home/output_plots \
-  "$DOCKER_IMAGE"
+  "$DOCKER_IMAGE" > simulation.txt 2>&1
 
 # --- Wait for simulation to start ---
 "$HOME"/kiso-colmena-experiment/bin/wait-for-docker-log.sh "$DOCKER_NAME" "[Loop]"

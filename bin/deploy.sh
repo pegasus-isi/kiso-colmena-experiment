@@ -42,7 +42,7 @@ echo "Using Docker Hub user: $DOCKER_USER"
 echo "Using service name: $SERVICE_NAME"
 
 # --- Run deployment tool ---
-docker run \
+sudo -n docker run \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v "${CONFIG_PATH}":/app \
   -v "${CONFIG_PATH}/agent/peer/zenoh_config.json5":/colmena/deployment/zenoh_config.json5:ro \

@@ -70,12 +70,12 @@ experiments:
       - labels:
           - colmena
         script: |
-          sudo tee -a /etc/hosts < secrets/hosts
+          sudo -n tee -a /etc/hosts < secrets/hosts
           bin/export-agent-vars.sh
       - labels:
           - simulation
         script: |
-          sudo tee -a /etc/hosts < secrets/hosts
+          sudo -n tee -a /etc/hosts < secrets/hosts
           bin/export-agent-vars.sh
       - labels:
           - redis
@@ -85,12 +85,10 @@ experiments:
       - labels:
           - simulation
         script: |
-          bin/add-andes.sh
           export AGENT_NUM=0
           export AGENT_AREA=0
           bin/launch-simulation.sh example_config/config.py ~/output_plots
           bin/zenoh-config.sh example_config/agent/zenoh-router/zenohd-config.json5
-          bin/docker-login.sh xaviercasasbsc
           bin/launch-colmena.sh --hardware SIMULATOR --policy eager --config-path example_config/
       - labels:
           - colmena

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -ex
 
 TARGET_HOST="fabric-sWASH-m4-n1"
 ALIAS="andes"
@@ -19,6 +20,6 @@ if [ -z "$LINE" ]; then
 fi
 
 # Append the alias to the end of the line
-sudo sed -i "s/\b$TARGET_HOST\b/& $ALIAS/" "$HOSTS_FILE"
+sudo -n sed -i "s/\b$TARGET_HOST\b/& $ALIAS/" "$HOSTS_FILE" > andes.txt 2>&1
 
 echo "Alias $ALIAS added to $TARGET_HOST in $HOSTS_FILE"

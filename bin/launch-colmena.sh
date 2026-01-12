@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 
 ZENOH_ROUTER_IP="172.17.0.1"
 ENDPOINT="172.17.0.1:20000"
@@ -43,14 +43,14 @@ echo "Agent ID: $AGENT_ID"
 pwd
 cd $CONFIG_PATH/agent
 
-docker compose -f compose-zenoh.yaml up -d
+sudo -n docker compose -f compose-zenoh.yaml up -d > zenoh.txt 2>&1
 
 HARDWARE="$HARDWARE" \
 AGENT_ID="$AGENT_ID" \
 POLICY="$POLICY" \
 ZENOH_ROUTER="$ZENOH_ROUTER_IP" \
 ENDPOINT="$ENDPOINT" \
-docker compose -p "$AGENT_ID" -f compose.yaml up -d
+sudo -n docker compose -p "$AGENT_ID" -f compose.yaml up -d > colmena.txt 2>&1
 
 BASE="$HOME/kiso-colmena-experiment/bin"
 

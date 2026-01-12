@@ -11,5 +11,5 @@ fi
 cd $HOME/SwarmAgents
 git checkout colmena-new
 
-docker compose up -d redis
+sudo -n docker compose up -d redis
 $HOME/kiso-colmena-experiment/bin/wait-for-docker-log.sh redis "Ready"

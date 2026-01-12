@@ -52,7 +52,7 @@ extract_ts() {
   local pattern="$2"
 
   local line
-  line=$(docker logs --tail 4000 "$container" 2>&1 | grep "$pattern" | head -n 1 || true)
+  line=$(sudo -n docker logs --tail 4000 "$container" 2>&1 | grep "$pattern" | head -n 1 || true)
 
   if [[ -z "$line" ]]; then
     echo ""

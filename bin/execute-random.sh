@@ -6,7 +6,7 @@ echo "# Execute Docker container with random RAM usage"
 echo "--------------------------------------------------"
 
 
-docker run -d --name random --network host ubuntu:latest bash -c '
+sudo -n docker run -d --name random --network host ubuntu:latest bash -c '
   set -e
   apt update -qq
   apt install -y -qq stress

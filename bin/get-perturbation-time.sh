@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-
+set -e
 # Container name (default: andes)
 CONTAINER="${1:-andes}"
 
 # Grab docker logs containing "Success"
-LOG_OUTPUT=$(docker logs -t "$CONTAINER" 2>&1 | grep "Success")
+LOG_OUTPUT=$(sudo -n docker logs -t "$CONTAINER" 2>&1 | grep "Success")
 
 if [[ -z "$LOG_OUTPUT" ]]; then
     echo "No 'Success' entries found in logs."

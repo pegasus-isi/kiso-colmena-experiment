@@ -1,12 +1,9 @@
 #!/bin/bash
 
-set -e
+set -ex
 
 echo "# Docker login"
 echo "--------------------"
-
-sudo usermod -aG docker $USER
-newgrp docker
 
 DOCKER_USER="$1"
 
@@ -17,7 +14,7 @@ if [ -z "$DOCKER_USER" ] ; then
 fi
 
 
-docker login \
+sudo -n docker login \
   --username "$DOCKER_USER" \
   --password-stdin \
-  < ~/kiso-colmena-experiment/secrets/docker_token.txt
+  < ~/kiso-colmena-experiment/secrets/docker_token.txt > docker.txt 2>&1
