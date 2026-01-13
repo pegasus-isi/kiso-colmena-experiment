@@ -28,14 +28,14 @@ fi
 mkdir -p "$OUTPUT_PATH"
 
 # --- Remove any existing container ---
-if sudo -n docker ps -a --format '{{.Names}}' | grep -q "^${DOCKER_NAME}\$"; then
+if docker ps -a --format '{{.Names}}' | grep -q "^${DOCKER_NAME}\$"; then
   echo "Removing existing container: $DOCKER_NAME"
-  sudo -n docker rm -f "$DOCKER_NAME"
+  docker rm -f "$DOCKER_NAME"
 fi
 
 # --- Run simulation container ---
 echo "Starting Docker container: $DOCKER_NAME"
-sudo -n docker run -d \
+docker run -d \
   --name "$DOCKER_NAME" \
   --network=host \
   -v "$CONFIG_PATH":/home/colmenasrc/config/config.py \

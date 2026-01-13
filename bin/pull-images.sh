@@ -12,7 +12,7 @@ fi
 
 for image in "$@"; do
     echo "Pulling $image..."
-    sudo -n docker pull "$image"
+    docker pull "$image"
 done
 
 echo "All images pulled."

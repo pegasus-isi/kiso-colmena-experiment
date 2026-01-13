@@ -115,33 +115,29 @@ experiments:
           export AGENT_AREA=$(cat secrets/agent_area)
           export AGENT_NUM=$(cat secrets/agent_num)
           bin/launch-colmena.sh --hardware AREA --policy consensus --config-path example_config/
-      # Install Swarm
-      #- labels:
-       #   - swarm
-       # script: |
-       #   export AGENT_NUM=$(cat secrets/agent_num)
-       #   grep -qE '(^|\s)andes(\s|$)' /etc/hosts || echo "192.168.57.245 andes" | sudo tee -a /etc/hosts > /dev/null
-       #   bin/launch-swarm.sh 18 3 6 example_config/
-      # Execute random process
-      #- labels:
-      #    - random
-      #  script: |
-      #    bin/execute-random.sh
-      # Trigger Simulation
-      #- labels:
-      #    - trigger
-      #  script: |
-      #    cat secrets/docker_token.txt | docker login -u xaviercasasbsc --password-stdin
-      #    bin/build-images.sh example_config/ xaviercasasbsc
-      #    bin/deploy.sh example_config/ xaviercasasbsc AgentControl
-      #- labels:
-      #    - wait
-      #  script: |
-      #    bin/wait-for-simulation.sh
-      #- labels:
-      #    - kpis
-      #  script: |
-      #    bin/fetch-kpi-timeline.sh
+      - labels:
+         - swarm
+        script: |
+          export AGENT_NUM=$(cat secrets/agent_num)
+          bin/launch-swarm.sh 9 3 3 $HOME/kiso-colmena-experiment/example_config
+      - labels:
+          - random
+        script: |
+          bin/execute-random.sh
+      - labels:
+          - trigger
+        script: |
+          bin/docker-login.sh xaviercasasbsc
+          bin/build-images.sh example_config/ xaviercasasbsc
+          bin/deploy.sh example_config/ xaviercasasbsc AgentControl
+      - labels:
+          - wait
+        script: |
+          bin/wait-for-simulation.sh
+      - labels:
+          - kpis
+        script: |
+          bin/fetch-kpi-timeline.sh
     outputs:
       - labels:
           - simulation

@@ -38,9 +38,12 @@ python3 -m generate_configs "$NUM_AGENTS" "$AGENTS_PER_GROUP" \
 
 LOGFILE="$HOME/SwarmAgents/swarm-multi/agent-${AGENT_NUM}.log"
 
-nohup python3 -u "${HOME}/SwarmAgents/main.py" "$AGENT_NUM" \
+python3 -u "${HOME}/SwarmAgents/main.py" "$AGENT_NUM" \
     --config "$HOME/SwarmAgents/configs/$CONFIG_FILE" \
-    --agent-type colmena --debug \
-    > "$LOGFILE" 2>&1 </dev/null &
+    --agent-type colmena --debug &
 
-disown
+while [ ! -f "$LOGFILE" ]; do
+    sleep 0.2
+done
+
+$HOME/kiso-colmena-experiment/bin/wait-for-text.sh "$LOGFILE" "Starting colmena agent"

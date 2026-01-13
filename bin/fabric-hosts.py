@@ -3,7 +3,7 @@
 from fabrictestbed_extensions.fablib.fablib import FablibManager as fablib_manager
 
 fablib = fablib_manager()
-slice = fablib.get_slice('fabric')
+slice = fablib.get_slice('colmena')
 
 lines = []
 

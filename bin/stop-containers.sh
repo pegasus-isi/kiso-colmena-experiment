@@ -2,7 +2,7 @@
 set -e
 
 # List all container IDs
-containers=$(sudo -n docker ps -q -a)
+containers=$(docker ps -q -a)
 
 if [ -z "$containers" ]; then
     echo "No running containers."
@@ -10,7 +10,7 @@ if [ -z "$containers" ]; then
 fi
 
 echo "Stopping all running containers..."
-sudo -n docker stop $containers
-sudo -n docker rm $containers
+docker stop $containers
+docker rm $containers
 
 echo "All containers stopped and removed."

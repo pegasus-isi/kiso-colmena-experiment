@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex
+set -e
 
 ZENOH_ROUTER_IP="172.17.0.1"
 ENDPOINT="172.17.0.1:20000"
@@ -43,18 +43,17 @@ echo "Agent ID: $AGENT_ID"
 pwd
 cd $CONFIG_PATH/agent
 
-sudo -n docker compose -f compose-zenoh.yaml up -d > zenoh.txt 2>&1
+docker compose -f compose-zenoh.yaml up -d
 
 HARDWARE="$HARDWARE" \
 AGENT_ID="$AGENT_ID" \
 POLICY="$POLICY" \
 ZENOH_ROUTER="$ZENOH_ROUTER_IP" \
 ENDPOINT="$ENDPOINT" \
-sudo -n docker compose -p "$AGENT_ID" -f compose.yaml up -d > colmena.txt 2>&1
+docker compose -p "$AGENT_ID" -f compose.yaml up -d
 
 BASE="$HOME/kiso-colmena-experiment/bin"
 
-$BASE/wait-for-docker-log.sh zenoh-zenoh-router-1 "Register resource colmena_service_definitions/*" &
 $BASE/wait-for-docker-log.sh "$AGENT_ID"-zenoh-client-1 "Finished getting published service definitions" &
 $BASE/wait-for-docker-log.sh "$AGENT_ID"-dsm-1 "COLMENA service definition published" &
 $BASE/wait-for-docker-log.sh "$AGENT_ID"-context-awareness-manager-1 "Server is ready to handle requests" &

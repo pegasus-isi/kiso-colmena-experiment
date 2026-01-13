@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -ex
-
 echo "# Docker login"
 echo "--------------------"
 
@@ -14,7 +12,7 @@ if [ -z "$DOCKER_USER" ] ; then
 fi
 
 
-sudo -n docker login \
+docker login \
   --username "$DOCKER_USER" \
   --password-stdin \
   < ~/kiso-colmena-experiment/secrets/docker_token.txt > docker.txt 2>&1

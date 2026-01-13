@@ -47,20 +47,20 @@ if [[ "$IS_BACKBONE" == true ]]; then
   case "$SITE" in
     HAWI)
       ENDPOINTS+=(
-        "tcp/[fabric-sUTAH-m3-n1]:${ZENOH_PORT}"
-        "tcp/[fabric-sWASH-m1-n1]:${ZENOH_PORT}"
+        "tcp/[colmena-sUTAH-m3-n1]:${ZENOH_PORT}"
+        "tcp/[colmena-sWASH-m1-n1]:${ZENOH_PORT}"
       )
       ;;
     WASH)
       ENDPOINTS+=(
-        "tcp/[fabric-sHAWI-m2-n1]:${ZENOH_PORT}"
-        "tcp/[fabric-sUTAH-m3-n1]:${ZENOH_PORT}"
+        "tcp/[colmena-sHAWI-m2-n1]:${ZENOH_PORT}"
+        "tcp/[colmena-sUTAH-m3-n1]:${ZENOH_PORT}"
       )
       ;;
     UTAH)
       ENDPOINTS+=(
-        "tcp/[fabric-sHAWI-m2-n1]:${ZENOH_PORT}"
-        "tcp/[fabric-sWASH-m1-n1]:${ZENOH_PORT}"
+        "tcp/[colmena-sHAWI-m2-n1]:${ZENOH_PORT}"
+        "tcp/[colmena-sWASH-m1-n1]:${ZENOH_PORT}"
       )
       ;;
     *)
@@ -72,13 +72,13 @@ else
   # non-backbone nodes always point to the local site's backbone
   case "$SITE" in
     HAWI)
-      BACKBONE_HOST="fabric-sHAWI-m2-n1"
+      BACKBONE_HOST="colmena-sHAWI-m2-n1"
       ;;
     WASH)
-      BACKBONE_HOST="fabric-sWASH-m1-n1"
+      BACKBONE_HOST="colmena-sWASH-m1-n1"
       ;;
     UTAH)
-      BACKBONE_HOST="fabric-sUTAH-m3-n1"
+      BACKBONE_HOST="colmena-sUTAH-m3-n1"
       ;;
     *)
       echo "ERROR: unknown site $SITE" >&2

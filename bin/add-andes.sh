@@ -1,7 +1,6 @@
 #!/bin/bash
-set -ex
 
-TARGET_HOST="fabric-sWASH-m4-n1"
+TARGET_HOST="colmena-sWASH-m4-n1"
 ALIAS="andes"
 HOSTS_FILE="/etc/hosts"
 

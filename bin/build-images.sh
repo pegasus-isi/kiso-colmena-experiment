@@ -18,12 +18,12 @@ cd "$CONFIG_PATH/docker"
 for ROLE in monitoringrole distributed_mpc simulationmanager; do
   echo "Building $ROLE..."
 
-  sudo -n docker build \
+  docker build \
     -t "${DOCKER_USER}/${ROLE}:0.1" \
     -f "Dockerfile.${ROLE}" \
     ../
 
-  sudo -n docker push "${DOCKER_USER}/${ROLE}:0.1"
+  docker push "${DOCKER_USER}/${ROLE}:0.1"
 done
 
 echo "Built and pushed all images using context: $CONFIG_PATH"
