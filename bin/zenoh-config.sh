@@ -47,20 +47,20 @@ if [[ "$IS_BACKBONE" == true ]]; then
   case "$SITE" in
     HAWI)
       ENDPOINTS+=(
-        "tcp/[colmena-sUTAH-m3-n1]:${ZENOH_PORT}"
-        "tcp/[colmena-sWASH-m1-n1]:${ZENOH_PORT}"
+        "tcp/colmena-sUTAH-m3-n1:${ZENOH_PORT}"
+        "tcp/colmena-sLOSA-m1-n1:${ZENOH_PORT}"
       )
       ;;
-    WASH)
+    LOSA)
       ENDPOINTS+=(
-        "tcp/[colmena-sHAWI-m2-n1]:${ZENOH_PORT}"
-        "tcp/[colmena-sUTAH-m3-n1]:${ZENOH_PORT}"
+        "tcp/colmena-sHAWI-m2-n1:${ZENOH_PORT}"
+        "tcp/colmena-sUTAH-m3-n1:${ZENOH_PORT}"
       )
       ;;
     UTAH)
       ENDPOINTS+=(
-        "tcp/[colmena-sHAWI-m2-n1]:${ZENOH_PORT}"
-        "tcp/[colmena-sWASH-m1-n1]:${ZENOH_PORT}"
+        "tcp/colmena-sHAWI-m2-n1:${ZENOH_PORT}"
+        "tcp/colmena-sLOSA-m1-n1:${ZENOH_PORT}"
       )
       ;;
     *)
@@ -74,8 +74,8 @@ else
     HAWI)
       BACKBONE_HOST="colmena-sHAWI-m2-n1"
       ;;
-    WASH)
-      BACKBONE_HOST="colmena-sWASH-m1-n1"
+    LOSA)
+      BACKBONE_HOST="colmena-sLOSA-m1-n1"
       ;;
     UTAH)
       BACKBONE_HOST="colmena-sUTAH-m3-n1"
@@ -86,7 +86,7 @@ else
       ;;
   esac
 
-  ENDPOINTS+=("tcp/[${BACKBONE_HOST}]:${ZENOH_PORT}")
+  ENDPOINTS+=("tcp/${BACKBONE_HOST}:${ZENOH_PORT}")
 fi
 
 # ----------------------------
