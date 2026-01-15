@@ -118,6 +118,7 @@ experiments:
          - swarm
         script: |
           export AGENT_NUM=$(cat secrets/agent_num)
+          export AGENT_AREA=$(cat secrets/agent_area)
           bin/launch-swarm.sh 9 3 3 $HOME/kiso-colmena-experiment/example_config
       - labels:
           - random
