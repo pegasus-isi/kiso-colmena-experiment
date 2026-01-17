@@ -15,18 +15,29 @@ NUM_AGENTS=$1
 AGENTS_PER_GROUP=$2
 NUM_GROUPS=$3
 CONFIG_PATH=$4
-
-AGENT_NUM=$AGENT_NUM
-AGENT_AREA=$AGENT_AREA
 REDIS_IP=andes
 
-# Clone repository if it doesn’t exist
+# --- Read secrets if needed ---
+if [[ -z "$AGENT_AREA" && -f secrets/agent_area ]]; then
+  read -r AGENT_AREA < secrets/agent_area
+fi
+
+if [[ -z "$AGENT_NUM" && -f secrets/agent_num ]]; then
+  read -r AGENT_NUM < secrets/agent_num
+fi
+
+# Only download if directory doesn't exist
 if [ ! -d "$HOME/SwarmAgents" ]; then
-    git clone https://github.com/xcasas/SwarmAgents.git "$HOME/SwarmAgents"
+    mkdir -p "$HOME/SwarmAgents"
+    curl -L https://github.com/xcasas/SwarmAgents/archive/refs/heads/colmena_backup.zip \
+        -o /tmp/SwarmAgents.zip
+
+    unzip -q /tmp/SwarmAgents.zip -d /tmp
+    mv /tmp/SwarmAgents-colmena_backup/* "$HOME/SwarmAgents"
+    rm -rf /tmp/SwarmAgents.zip /tmp/SwarmAgents-colmena_backup
 fi
 
 cd "$HOME/SwarmAgents"
-git checkout colmena_backup
 
 python3 -m pip install -r requirements.txt
 

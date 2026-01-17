@@ -1,12 +1,11 @@
 #!/bin/bash
-set -e
 
 CONFIG_PATH="$1"
-DOCKER_USER="$2"
+read -r DOCKER_USER < "$HOME/kiso-colmena-experiment/secrets/docker_username.txt"
 
-if [ -z "$CONFIG_PATH" ] || [ -z "$DOCKER_USER" ]; then
-  echo "Usage: $0 <path-to-build-context-folder> <dockerhub-username>"
-  echo "Example: $0 ~/kiso-colmena-experiment/example_config xaviercasasbsc"
+if [ -z "$CONFIG_PATH" ]; then
+  echo "Usage: $0 <path-to-build-context-folder>"
+  echo "Example: $0 ~/kiso-colmena-experiment/example_config"
   exit 1
 fi
 

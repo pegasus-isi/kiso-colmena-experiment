@@ -1,35 +1,35 @@
 #!/bin/bash
-set -e
 
 echo "# Build and deploy use case"
 echo "---------------------------"
 
 CONFIG_PATH="$1"
-DOCKER_USER="$2"
-SERVICE_NAME="$3"
+SERVICE_NAME="$2"
+read -r DOCKER_USER < "$HOME/kiso-colmena-experiment/secrets/docker_username.txt"
 
 # --- Validate inputs ---
-if [ -z "$CONFIG_PATH" ] || [ -z "$DOCKER_USER" ] || [ -z "$SERVICE_NAME" ]; then
-  echo "Usage: $0 <path-to-example_config> <dockerhub-username> <service-name>"
-  echo "Example: $0 ~/kiso-colmena-experiment/example_config xaviercasasbsc AgentControl"
+if [ -z "$CONFIG_PATH" ] || [ -z "$SERVICE_NAME" ]; then
+  echo "Usage: $0 <path-to-example_config> <service-name>"
+  echo "Example: $0 ~/kiso-colmena-experiment/example_config AgentControl"
   exit 1
 fi
 
 # --- Convert to absolute path to avoid Docker relative path error ---
 CONFIG_PATH="$(realpath "$CONFIG_PATH")"
 
-# --- Required environment variables ---
-if [ -z "$AGENT_NUM" ]; then
-  echo "Error: AGENT_NUM is not set."
-  echo "Please export AGENT_NUM before running this script, e.g.:"
-  echo "  export AGENT_NUM=1"
-  exit 1
+# --- Read secrets if needed ---
+if [[ -z "$AGENT_AREA" && -f secrets/agent_area ]]; then
+  read -r AGENT_AREA < secrets/agent_area
 fi
 
-if [ -z "$AGENT_AREA" ]; then
-  echo "Error: AGENT_AREA is not set."
-  echo "Please export AGENT_AREA before running this script, e.g.:"
-  echo "  export AGENT_AREA=3"
+if [[ -z "$AGENT_NUM" && -f secrets/agent_num ]]; then
+  read -r AGENT_NUM < secrets/agent_num
+fi
+
+# --- Validate required environment variables ---
+if [[ -z "$AGENT_NUM" || -z "$AGENT_AREA" ]]; then
+  echo "Error: AGENT_NUM and AGENT_AREA environment variables are required."
+  echo "Example: export AGENT_NUM=1; export AGENT_AREA=3"
   exit 1
 fi
 

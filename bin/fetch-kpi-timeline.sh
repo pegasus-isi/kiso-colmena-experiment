@@ -1,8 +1,21 @@
 #!/usr/bin/env bash
 set -e
 
-AGENT_NUM="${AGENT_NUM:?Missing AGENT_NUM}"
-AGENT_AREA="${AGENT_AREA:?Missing AGENT_AREA}"
+# --- Read secrets if needed ---
+if [[ -z "$AGENT_AREA" && -f secrets/agent_area ]]; then
+  read -r AGENT_AREA < secrets/agent_area
+fi
+
+if [[ -z "$AGENT_NUM" && -f secrets/agent_num ]]; then
+  read -r AGENT_NUM < secrets/agent_num
+fi
+
+# --- Validate required environment variables ---
+if [[ -z "$AGENT_NUM" || -z "$AGENT_AREA" ]]; then
+  echo "Error: AGENT_NUM and AGENT_AREA environment variables are required."
+  echo "Example: export AGENT_NUM=1; export AGENT_AREA=3"
+  exit 1
+fi
 
 docker logs agent_${AGENT_NUM}_${AGENT_AREA}-sla-manager-1 > $HOME/logs.txt 2>&1
 

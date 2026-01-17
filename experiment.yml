@@ -9,7 +9,7 @@ sites:
       machines:
         - labels:
             - colmena
-            - swarm
+            - consensus
             - random
           site: LOSA
           image: docker_ubuntu_22
@@ -20,7 +20,7 @@ sites:
           number: 3
         - labels:
             - colmena
-            - swarm
+            - consensus
             - random
           site: HAWI
           image: docker_ubuntu_22
@@ -31,7 +31,7 @@ sites:
           number: 3
         - labels:
             - colmena
-            - swarm
+            - consensus
             - random
           site: UTAH
           image: docker_ubuntu_22
@@ -85,40 +85,23 @@ experiments:
           - colmena
           - simulation
         script: |
-          sudo usermod -a -G docker kiso
-      - labels:
-          - colmena
-          - simulation
-        script: |
-          sudo -n tee -a /etc/hosts < secrets/hosts
-          bin/export-agent-vars.sh
+          bin/configure.sh
       - labels:
           - redis
         script: |
-          bin/docker-login.sh xaviercasasbsc
           bin/launch-redis.sh
       - labels:
           - simulation
         script: |
-          export AGENT_NUM=0
-          export AGENT_AREA=0
           bin/launch-simulation.sh example_config/config.py ~/output_plots
-          bin/zenoh-config.sh example_config/agent/zenoh-router/zenohd-config.json5
           bin/launch-colmena.sh --hardware SIMULATOR --policy eager --config-path example_config/
       - labels:
           - colmena
         script: |
-          bin/zenoh-config.sh example_config/agent/zenoh-router/zenohd-config.json5
-          bin/docker-login.sh xaviercasasbsc
-          bin/pull-images.sh xaviercasasbsc/distributed_mpc:0.1 xaviercasasbsc/monitoringrole:0.1 xaviercasasbsc/simulationmanager:0.1
-          export AGENT_AREA=$(cat secrets/agent_area)
-          export AGENT_NUM=$(cat secrets/agent_num)
           bin/launch-colmena.sh --hardware AREA --policy consensus --config-path example_config/
       - labels:
-         - swarm
+         - consensus
         script: |
-          export AGENT_NUM=$(cat secrets/agent_num)
-          export AGENT_AREA=$(cat secrets/agent_area)
           bin/launch-swarm.sh 9 3 3 $HOME/kiso-colmena-experiment/example_config
       - labels:
           - random
@@ -127,29 +110,37 @@ experiments:
       - labels:
           - trigger
         script: |
-          export AGENT_AREA=$(cat secrets/agent_area)
-          export AGENT_NUM=$(cat secrets/agent_num)
-          bin/docker-login.sh xaviercasasbsc
-          bin/build-images.sh example_config/ xaviercasasbsc
-          bin/deploy.sh example_config/ xaviercasasbsc AgentControl
+          bin/build-images.sh example_config/
+          bin/deploy.sh example_config/ AgentControl
       - labels:
           - wait
         script: |
-          export AGENT_AREA=$(cat secrets/agent_area)
-          export AGENT_NUM=$(cat secrets/agent_num)
           bin/wait-for-simulation.sh
       - labels:
           - kpis
         script: |
-          export AGENT_AREA=$(cat secrets/agent_area)
-          export AGENT_NUM=$(cat secrets/agent_num)
           bin/fetch-kpi-timeline.sh
+      - labels:
+          - colmena
+          - simulation
+        script: |
+          bin/get-agent-timestamps.sh
+          bin/stop-containers.sh
+      - labels:
+          - consensus
+        script: |
+          bin/stop-swarm.sh
+    
     outputs:
       - labels:
           - simulation
-        src: output_plots/
+        src: /home/kiso/output_plots
         dst: output/simulation/
       - labels:
           - trigger
-        src: /home/ubuntu/logs.txt
+        src: /home/kiso/logs_parsed.txt
         dst: output/kpi_logs/
+      - labels:
+          - colmena
+        src: /home/kiso/timestamps.json
+        dst: output/timestamps/
