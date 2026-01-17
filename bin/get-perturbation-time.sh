@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+set -e
 # Container name (default: andes)
 CONTAINER="${1:-andes}"
 

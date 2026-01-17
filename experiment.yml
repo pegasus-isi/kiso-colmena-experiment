@@ -1,318 +1,117 @@
 name: colmena-experiment
 
-software:
-  docker:
-    labels:
-      - simulation
-      - redis
-      - colmena
-      - swarm
-      - trigger
-
 sites:
   - kind: fabric
     rc_file: secrets/fabric_rc
     walltime: "02:00:00"
+    name_prefix: colmena
     resources:
       machines:
+        - labels:
+            - colmena
+            - consensus
+            - random
+          site: LOSA
+          image: docker_ubuntu_22
+          flavour_desc:
+            core: 1
+            mem: 1
+            disk: 20
+          number: 3
+        - labels:
+            - colmena
+            - consensus
+            - random
+          site: HAWI
+          image: docker_ubuntu_22
+          flavour_desc:
+            core: 1
+            mem: 1
+            disk: 20
+          number: 3
+        - labels:
+            - colmena
+            - consensus
+            - random
+          site: UTAH
+          image: docker_ubuntu_22
+          flavour_desc:
+            core: 1
+            mem: 1
+            disk: 20
+          number: 3
         - labels:
             - simulation
             - redis
             - wait
-          site: HAWI
-          image: docker_ubuntu_22
-          flavour: small
-          number: 1
-        - labels:
-            - colmena
-            - swarm
             - trigger
-            - random
             - kpis
-          site: WASH
+          site: LOSA
           image: docker_ubuntu_22
-          flavour: small
+          flavour_desc:
+            core: 1
+            mem: 1
+            disk: 20
           number: 1
-        - labels:
-            - colmena
-            - swarm
-          site: WASH
-          image: docker_ubuntu_22
-          flavour: small
-          number: 1
-        - labels:
-            - colmena
-            - swarm
-          site: WASH
-          image: docker_ubuntu_22
-          flavour: small
-          number: 3
-        - labels:
-            - colmena
-            - swarm
-          site: UTAH
-          image: docker_ubuntu_22
-          flavour: small
-          number: 3
-        #- labels:
-        #    - colmena
-        #    - swarm
-        #  site: BRIST
-        #  image: docker_ubuntu_22
-        #  flavour: small
-        #  number: 3
-        #- labels:
-        #    - colmena
-        #    - swarm
-        #  site: LOSA
-        #  image: docker_ubuntu_22
-        #  flavour: small
-        #  number: 3
-        #- labels:
-        #    - colmena
-        #    - swarm
-        #  site: STAR
-        #  image: docker_ubuntu_22
-        #  flavour: small
-        #  number: 3
       networks:
-        # -------------
-        # IPv4 L2Bridge
-        # -------------
         - labels:
             - v4
-          kind: L2Bridge
-          site: WASH
+          kind: FABNetv4
+          site: LOSA
           nic:
             kind: SharedNIC
             model: ConnectX-6
         - labels:
             - v4
-          kind: L2Bridge
+          kind: FABNetv4
           site: HAWI
           nic:
             kind: SharedNIC
             model: ConnectX-6
         - labels:
             - v4
-          kind: L2Bridge
+          kind: FABNetv4
           site: UTAH
           nic:
             kind: SharedNIC
             model: ConnectX-6
-        #- labels:
-        #    - v4
-        #  kind: L2Bridge
-        #  site: BRIST
-        #  nic:
-        #    kind: SharedNIC
-        #    model: ConnectX-6
-        #- labels:
-        #    - v4
-        #  kind: L2Bridge
-        #  site: LOSA
-        #  nic:
-        #    kind: SharedNIC
-        #    model: ConnectX-6
-        #- labels:
-        #    - v4
-        #  kind: L2Bridge
-        #  site: STAR
-        #  nic:
-        #    kind: SharedNIC
-        #    model: ConnectX-6
-
-        # ----------
-        # IPv4 L2STS
-        # ----------
-        - labels:
-            - v4
-          kind: L2STS
-          site_1: WASH
-          site_2: HAWI
-          nic:
-            kind: SharedNIC
-            model: ConnectX-6
-        - labels:
-            - v4
-          kind: L2STS
-          site_1: WASH
-          site_2: UTAH
-          nic:
-            kind: SharedNIC
-            model: ConnectX-6
-       # - labels:
-       #     - v4
-       #   kind: L2STS
-       #   site_1: WASH
-       #   site_2: BRIST
-       #   nic:
-       #     kind: SharedNIC
-       #     model: ConnectX-6
-       # - labels:
-       #     - v4
-       #   kind: L2STS
-       #   site_1: WASH
-       #   site_2: LOSA
-       #   nic:
-       #     kind: SharedNIC
-       #     model: ConnectX-6
-       # - labels:
-       #     - v4
-       #   kind: L2STS
-       #   site_1: WASH
-       #   site_2: STAR
-       #   nic:
-       #     kind: SharedNIC
-       #     model: ConnectX-6
-        - labels:
-            - v4
-          kind: L2STS
-          site_1: HAWI
-          site_2: UTAH
-          nic:
-            kind: SharedNIC
-            model: ConnectX-6
-        #- labels:
-        #    - v4
-        #  kind: L2STS
-        #  site_1: HAWI
-        #  site_2: BRIST
-        #  nic:
-        #    kind: SharedNIC
-        #    model: ConnectX-6
-        #- labels:
-        #    - v4
-        #  kind: L2STS
-        #  site_1: HAWI
-        #  site_2: LOSA
-        #  nic:
-        #    kind: SharedNIC
-        #    model: ConnectX-6
-        #- labels:
-        #    - v4
-        #  kind: L2STS
-        #  site_1: HAWI
-        #  site_2: STAR
-        #  nic:
-        #    kind: SharedNIC
-        #    model: ConnectX-6
-        #- labels:
-        #    - v4
-        #  kind: L2STS
-        #  site_1: UTAH
-        #  site_2: BRIST
-        #  nic:
-        #    kind: SharedNIC
-        #    model: ConnectX-6
-        #- labels:
-        #    - v4
-        #  kind: L2STS
-        #  site_1: UTAH
-        #  site_2: LOSA
-        #  nic:
-        #    kind: SharedNIC
-        #    model: ConnectX-6
-        #- labels:
-        #    - v4
-        #  kind: L2STS
-        #  site_1: UTAH
-        #  site_2: STAR
-        #  nic:
-        #    kind: SharedNIC
-        #    model: ConnectX-6
-        #- labels:
-        #    - v4
-        #  kind: L2STS
-        #  site_1: BRIST
-        #  site_2: LOSA
-        #  nic:
-        #    kind: SharedNIC
-        #    model: ConnectX-6
-        #- labels:
-        #    - v4
-        #  kind: L2STS
-        #  site_1: BRIST
-        #  site_2: STAR
-        #  nic:
-        #    kind: SharedNIC
-        #    model: ConnectX-6
-        #- labels:
-        #    - v4
-        #  kind: L2STS
-        #  site_1: LOSA
-        #  site_2: STAR
-        #  nic:
-        #    kind: SharedNIC
-        #    model: ConnectX-6
 
 experiments:
   - kind: shell
     name: colmena-experiment-1
     description: colmena-experiment-1
     scripts:
-      # Install Redis
       - labels:
-          - trigger
-          - redis
-          - simulation
           - colmena
-          - swarm
-          - wait
-          - kpis
+          - simulation
         script: |
-          sudo dnf -y install git
-      #- labels:
-      #    - trigger
-      #  script: |
-      #    bin/fabric-l2-network.py
-      # Install Redis
+          bin/configure.sh
       - labels:
           - redis
         script: |
-          bin/docker-login.sh xaviercasasbsc
           bin/launch-redis.sh
-      # Install Simulation
       - labels:
           - simulation
-        # Host names should be included previously, this is a temporal solution
         script: |
-          grep -qE '(^|\s)andes(\s|$)' /etc/hosts || echo "192.168.157.245 andes" | sudo tee -a /etc/hosts > /dev/null 
-          export AGENT_NUM=0
-          export AGENT_AREA=0
-          bin/launch-simulation.sh example_config/config.py ~/output_plots 
+          bin/launch-simulation.sh example_config/config.py ~/output_plots
           bin/launch-colmena.sh --hardware SIMULATOR --policy eager --config-path example_config/
-      # Install Colmena
       - labels:
           - colmena
         script: |
-          bin/docker-login.sh xaviercasasbsc
-          bin/pull-images.sh xaviercasasbsc/distributed_mpc:0.1 xaviercasasbsc/monitoringrole:0.1 xaviercasasbsc/simulationmanager:0.1
-          grep -qE '(^|\s)andes(\s|$)' /etc/hosts || echo "192.168.157.245 andes" | sudo tee -a /etc/hosts > /dev/null
-          export AGENT_NUM=1
-          export AGENT_AREA=1
           bin/launch-colmena.sh --hardware AREA --policy consensus --config-path example_config/
-      # Install Swarm
       - labels:
-          - swarm
+         - consensus
         script: |
-          export AGENT_NUM=1
-          grep -qE '(^|\s)andes(\s|$)' /etc/hosts || echo "192.168.57.245 andes" | sudo tee -a /etc/hosts > /dev/null
-          bin/launch-swarm.sh 18 3 6 example_config/
-      # Execute random process
+          bin/launch-swarm.sh 9 3 3 $HOME/kiso-colmena-experiment/example_config
       - labels:
           - random
         script: |
           bin/execute-random.sh
-      # Trigger Simulation
       - labels:
           - trigger
         script: |
-          export AGENT_NUM=1
-          export AGENT_AREA=1
-          cat secrets/docker_token.txt | docker login -u xaviercasasbsc --password-stdin
-          bin/build-images.sh example_config/ xaviercasasbsc
-          bin/deploy.sh example_config/ xaviercasasbsc AgentControl
+          bin/build-images.sh example_config/
+          bin/deploy.sh example_config/ AgentControl
       - labels:
           - wait
         script: |
@@ -321,12 +120,27 @@ experiments:
           - kpis
         script: |
           bin/fetch-kpi-timeline.sh
+      - labels:
+          - colmena
+          - simulation
+        script: |
+          bin/get-agent-timestamps.sh
+          bin/stop-containers.sh
+      - labels:
+          - consensus
+        script: |
+          bin/stop-swarm.sh
+    
     outputs:
       - labels:
           - simulation
-        src: output_plots/
+        src: /home/kiso/output_plots
         dst: output/simulation/
       - labels:
           - trigger
-        src: /home/ubuntu/logs.txt
-        dst: output/kpi_logs.txt
+        src: /home/kiso/logs_parsed.txt
+        dst: output/kpi_logs/
+      - labels:
+          - colmena
+        src: /home/kiso/timestamps.json
+        dst: output/timestamps/

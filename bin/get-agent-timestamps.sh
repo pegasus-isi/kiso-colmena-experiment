@@ -1,9 +1,19 @@
 #!/usr/bin/env bash
 set -e
 
-# --- Required env variables ---
+# --- Read secrets if needed ---
+if [[ -z "$AGENT_AREA" && -f secrets/agent_area ]]; then
+  read -r AGENT_AREA < secrets/agent_area
+fi
+
+if [[ -z "$AGENT_NUM" && -f secrets/agent_num ]]; then
+  read -r AGENT_NUM < secrets/agent_num
+fi
+
+# --- Validate required environment variables ---
 if [[ -z "$AGENT_NUM" || -z "$AGENT_AREA" ]]; then
-  echo "Error: AGENT_NUM and AGENT_AREA must be set."
+  echo "Error: AGENT_NUM and AGENT_AREA environment variables are required."
+  echo "Example: export AGENT_NUM=1; export AGENT_AREA=3"
   exit 1
 fi
 

@@ -28,12 +28,23 @@ if [[ -z "$HARDWARE" || -z "$POLICY" || -z "$CONFIG_PATH" ]]; then
   exit 1
 fi
 
+# --- Read secrets if needed ---
+if [[ -z "$AGENT_AREA" && -f secrets/agent_area ]]; then
+  read -r AGENT_AREA < secrets/agent_area
+fi
+
+if [[ -z "$AGENT_NUM" && -f secrets/agent_num ]]; then
+  read -r AGENT_NUM < secrets/agent_num
+fi
+
 # --- Validate required environment variables ---
 if [[ -z "$AGENT_NUM" || -z "$AGENT_AREA" ]]; then
   echo "Error: AGENT_NUM and AGENT_AREA environment variables are required."
   echo "Example: export AGENT_NUM=1; export AGENT_AREA=3"
   exit 1
 fi
+
+$HOME/kiso-colmena-experiment/bin/docker-login.sh
 
 # --- Build AGENT_ID dynamically ---
 AGENT_ID="agent_${AGENT_NUM}_${AGENT_AREA}"
@@ -45,6 +56,9 @@ cd $CONFIG_PATH/agent
 
 docker compose -f compose-zenoh.yaml up -d
 
+# Not necessarily but avoids pulling them in runtime - TODO this directly within COLMENA
+$HOME/kiso-colmena-experiment/bin/pull-images.sh xaviercasasbsc/distributed_mpc:0.1 xaviercasasbsc/monitoringrole:0.1 xaviercasasbsc/simulationmanager:0.1
+
 HARDWARE="$HARDWARE" \
 AGENT_ID="$AGENT_ID" \
 POLICY="$POLICY" \
@@ -54,7 +68,6 @@ docker compose -p "$AGENT_ID" -f compose.yaml up -d
 
 BASE="$HOME/kiso-colmena-experiment/bin"
 
-$BASE/wait-for-docker-log.sh zenoh-zenoh-router-1 "Register resource colmena_service_definitions/*" &
 $BASE/wait-for-docker-log.sh "$AGENT_ID"-zenoh-client-1 "Finished getting published service definitions" &
 $BASE/wait-for-docker-log.sh "$AGENT_ID"-dsm-1 "COLMENA service definition published" &
 $BASE/wait-for-docker-log.sh "$AGENT_ID"-context-awareness-manager-1 "Server is ready to handle requests" &
