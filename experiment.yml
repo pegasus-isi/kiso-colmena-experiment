@@ -142,5 +142,5 @@ experiments:
         dst: output/kpi_logs/
       - labels:
           - colmena
-        src: /home/kiso/timestamps.json
+        src: /home/kiso/timestamps/
         dst: output/timestamps/

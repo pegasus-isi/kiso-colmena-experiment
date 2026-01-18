@@ -17,9 +17,23 @@ if [[ -z "$AGENT_NUM" || -z "$AGENT_AREA" ]]; then
   exit 1
 fi
 
+# -------------------------------------------------------
+# Ensure timestamps folder exists (remove & recreate if already exists)
+# -------------------------------------------------------
+TIMESTAMP_DIR="$HOME/timestamps"
+
+if [[ -d "$TIMESTAMP_DIR" ]]; then
+    echo "Removing existing timestamps folder..."
+    rm -rf "$TIMESTAMP_DIR"
+fi
+
+echo "Creating timestamps folder..."
+mkdir -p "$TIMESTAMP_DIR"
+
+
 AGENT_ID="agent_${AGENT_NUM}_${AGENT_AREA}"
 ROLE_NAME="${ROLE_NAME:-Distributed_MPC}"
-OUTPUT_FILE="$HOME/timestamps.json"
+OUTPUT_FILE="$HOME/timestamps/timestamps_$AGENT_ID.json"
 
 echo "Running on agent: $AGENT_ID"
 echo "Checking if this agent became leader..."
@@ -28,8 +42,11 @@ echo
 # -------------------------------------------------------
 # Check if this agent is leader for any role
 # -------------------------------------------------------
+AGENTS_PER_AREA=3
+GLOBAL_AGENT_NUM=$(( (AGENT_AREA - 1) * AGENTS_PER_AREA + AGENT_NUM ))
+
 MY_RAW_LINE=$(cd $HOME/SwarmAgents && python3 dump_db.py --key role --host andes \
-  | grep "\"leader_id\": $AGENT_NUM" \
+  | grep "\"leader_id\": $GLOBAL_AGENT_NUM" \
   | head -n1 || true)
 
 if [[ -z "$MY_RAW_LINE" ]]; then
