@@ -5,12 +5,7 @@ ZENOH_CONFIG="${1:?Usage: $0 <zenoh_config_file>}"
 ZENOH_PORT=7447
 ZENOH_CONFIG="$(readlink -f "$ZENOH_CONFIG")"
 
-# ----------------------------
-# Remove old config if it exists
-# ----------------------------
-if [[ -f "$ZENOH_CONFIG" ]]; then
-    rm -f "$ZENOH_CONFIG"
-fi
+rm -f "$ZENOH_CONFIG"
 
 # ----------------------------
 # Detect identity
@@ -27,65 +22,72 @@ fi
 
 # ----------------------------
 # Determine backbone
-# Only m1-n1, m2-n1, m3-n1 are backbones
-# Exception: m4-n1 is never backbone
+# Backbone = n1 EXCEPT m7-n1
 # ----------------------------
 IS_BACKBONE=false
-if [[ "$NODE" == "1" ]]; then
-    case "$MACHINE" in
-        1|2|3) IS_BACKBONE=true ;;
-        4) IS_BACKBONE=false ;;  # exception
-        *) IS_BACKBONE=false ;;
-    esac
+if [[ "$NODE" == "1" && "$MACHINE" != "7" ]]; then
+    IS_BACKBONE=true
 fi
+
+# ----------------------------
+# Site list (ring order)
+# ----------------------------
+ALL_SITES=(
+  HAWI
+  LOSA
+  UCSD
+  STAR
+  BRIST
+  FIU
+)
+
+# ----------------------------
+# Site -> backbone machine
+# ----------------------------
+declare -A SITE_BACKBONE_MACHINE=(
+  [HAWI]=2
+  [LOSA]=1
+  [UCSD]=3
+  [STAR]=4
+  [BRIST]=5
+  [FIU]=6
+)
 
 # ----------------------------
 # Compute endpoints
 # ----------------------------
 ENDPOINTS=()
-if [[ "$IS_BACKBONE" == true ]]; then
-  case "$SITE" in
-    HAWI)
-      ENDPOINTS+=(
-        "tcp/colmena-sUTAH-m3-n1:${ZENOH_PORT}"
-        "tcp/colmena-sLOSA-m1-n1:${ZENOH_PORT}"
-      )
-      ;;
-    LOSA)
-      ENDPOINTS+=(
-        "tcp/colmena-sHAWI-m2-n1:${ZENOH_PORT}"
-        "tcp/colmena-sUTAH-m3-n1:${ZENOH_PORT}"
-      )
-      ;;
-    UTAH)
-      ENDPOINTS+=(
-        "tcp/colmena-sHAWI-m2-n1:${ZENOH_PORT}"
-        "tcp/colmena-sLOSA-m1-n1:${ZENOH_PORT}"
-      )
-      ;;
-    *)
-      echo "ERROR: unknown site $SITE" >&2
-      exit 1
-      ;;
-  esac
-else
-  # non-backbone nodes always point to the local site's backbone
-  case "$SITE" in
-    HAWI)
-      BACKBONE_HOST="colmena-sHAWI-m2-n1"
-      ;;
-    LOSA)
-      BACKBONE_HOST="colmena-sLOSA-m1-n1"
-      ;;
-    UTAH)
-      BACKBONE_HOST="colmena-sUTAH-m3-n1"
-      ;;
-    *)
-      echo "ERROR: unknown site $SITE" >&2
-      exit 1
-      ;;
-  esac
 
+if [[ "$IS_BACKBONE" == true ]]; then
+  # Backbone routers form a ring
+  num_sites="${#ALL_SITES[@]}"
+  site_index=-1
+  for i in "${!ALL_SITES[@]}"; do
+    [[ "${ALL_SITES[$i]}" == "$SITE" ]] && site_index="$i" && break
+  done
+  if [[ "$site_index" -lt 0 ]]; then
+    echo "ERROR: site $SITE not found in ALL_SITES ring" >&2
+    exit 1
+  fi
+
+  prev_index=$(( (site_index - 1 + num_sites) % num_sites ))
+  next_index=$(( (site_index + 1) % num_sites ))
+
+  PREV_SITE="${ALL_SITES[$prev_index]}"
+  NEXT_SITE="${ALL_SITES[$next_index]}"
+
+  PREV_MACHINE="${SITE_BACKBONE_MACHINE[$PREV_SITE]}"
+  NEXT_MACHINE="${SITE_BACKBONE_MACHINE[$NEXT_SITE]}"
+
+  ENDPOINTS+=(
+    "tcp/colmena-s${PREV_SITE}-m${PREV_MACHINE}-n1:${ZENOH_PORT}"
+    "tcp/colmena-s${NEXT_SITE}-m${NEXT_MACHINE}-n1:${ZENOH_PORT}"
+  )
+
+else
+  # Non-backbone nodes connect to the site's real backbone
+  BACKBONE_MACHINE="${SITE_BACKBONE_MACHINE[$SITE]:?No backbone defined for $SITE}"
+  BACKBONE_HOST="colmena-s${SITE}-m${BACKBONE_MACHINE}-n1"
   ENDPOINTS+=("tcp/${BACKBONE_HOST}:${ZENOH_PORT}")
 fi
 

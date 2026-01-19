@@ -9,7 +9,7 @@ AGENT_AREA=$(hostname | sed -n 's/.*-m\([0-9]\+\)-.*/\1/p')
 AGENT_NUM=$(hostname | sed -n 's/.*-n\([0-9]\+\)$/\1/p')
 
 # Apply special rule: if AGENT_AREA == 4, set both to 0
-if [[ "${AGENT_AREA:-}" == "4" ]]; then
+if [[ "${AGENT_AREA:-}" == "7" ]]; then
   AGENT_AREA=0
   AGENT_NUM=0
 fi

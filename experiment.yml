@@ -33,7 +33,40 @@ sites:
             - colmena
             - consensus
             - random
-          site: UTAH
+          site: UCSD
+          image: docker_ubuntu_22
+          flavour_desc:
+            core: 1
+            mem: 1
+            disk: 20
+          number: 3
+        - labels:
+            - colmena
+            - consensus
+            - random
+          site: STAR
+          image: docker_ubuntu_22
+          flavour_desc:
+            core: 1
+            mem: 1
+            disk: 20
+          number: 3
+        - labels:
+            - colmena
+            - consensus
+            - random
+          site: BRIST
+          image: docker_ubuntu_22
+          flavour_desc:
+            core: 1
+            mem: 1
+            disk: 20
+          number: 3
+        - labels:
+            - colmena
+            - consensus
+            - random
+          site: FIU
           image: docker_ubuntu_22
           flavour_desc:
             core: 1
@@ -71,7 +104,28 @@ sites:
         - labels:
             - v4
           kind: FABNetv4
-          site: UTAH
+          site: UCSD
+          nic:
+            kind: SharedNIC
+            model: ConnectX-6
+        - labels:
+            - v4
+          kind: FABNetv4
+          site: STAR
+          nic:
+            kind: SharedNIC
+            model: ConnectX-6
+        - labels:
+            - v4
+          kind: FABNetv4
+          site: BRIST
+          nic:
+            kind: SharedNIC
+            model: ConnectX-6
+        - labels:
+            - v4
+          kind: FABNetv4
+          site: FIU
           nic:
             kind: SharedNIC
             model: ConnectX-6
@@ -102,7 +156,7 @@ experiments:
       - labels:
          - consensus
         script: |
-          bin/launch-swarm.sh 9 3 3 $HOME/kiso-colmena-experiment/example_config
+          bin/launch-swarm.sh 18 3 6 $HOME/kiso-colmena-experiment/example_config
       - labels:
           - random
         script: |
@@ -122,14 +176,20 @@ experiments:
           bin/fetch-kpi-timeline.sh
       - labels:
           - colmena
-          - simulation
         script: |
           bin/get-agent-timestamps.sh
+      - labels:
+          - colmena
+        script: |
           bin/stop-containers.sh
       - labels:
           - consensus
         script: |
           bin/stop-swarm.sh
+      - labels:
+          - simulation
+        script: |
+          bin/stop-containers.sh 
     
     outputs:
       - labels:
