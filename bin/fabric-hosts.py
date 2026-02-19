@@ -6,7 +6,7 @@ fablib = fablib_manager()
 slice = fablib.get_slice('colmena')
 
 # Sites in slice (order determines agent numbering)
-SITES = ("LOSA", "HAWI", "UCSD", "STAR", "BRIST", "FIU")
+SITES = ("LOSA", "UTAH", "UCSD", "STAR", "BRIST", "FIU")
 
 lines = []
 agent_counter = 1  # Sequential agent IDs from 1 → 18

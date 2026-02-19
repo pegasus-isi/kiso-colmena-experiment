@@ -33,7 +33,7 @@ fi
 # Site list (ring order)
 # ----------------------------
 ALL_SITES=(
-  HAWI
+  UTAH
   LOSA
   UCSD
   STAR
@@ -45,7 +45,7 @@ ALL_SITES=(
 # Site -> backbone machine
 # ----------------------------
 declare -A SITE_BACKBONE_MACHINE=(
-  [HAWI]=2
+  [UTAH]=2
   [LOSA]=1
   [UCSD]=3
   [STAR]=4

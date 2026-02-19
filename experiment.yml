@@ -3,7 +3,7 @@ name: colmena-experiment
 sites:
   - kind: fabric
     rc_file: secrets/fabric_rc
-    walltime: "02:00:00"
+    walltime: "10:00:00"
     name_prefix: colmena
     resources:
       machines:
@@ -17,18 +17,18 @@ sites:
             core: 1
             mem: 1
             disk: 20
-          number: 3
+          number: 10
         - labels:
             - colmena
             - consensus
             - random
-          site: HAWI
+          site: UTAH
           image: docker_ubuntu_22
           flavour_desc:
             core: 1
             mem: 1
             disk: 20
-          number: 3
+          number: 10
         - labels:
             - colmena
             - consensus
@@ -39,7 +39,7 @@ sites:
             core: 1
             mem: 1
             disk: 20
-          number: 3
+          number: 10
         - labels:
             - colmena
             - consensus
@@ -50,7 +50,7 @@ sites:
             core: 1
             mem: 1
             disk: 20
-          number: 3
+          number: 10
         - labels:
             - colmena
             - consensus
@@ -61,7 +61,7 @@ sites:
             core: 1
             mem: 1
             disk: 20
-          number: 3
+          number: 10
         - labels:
             - colmena
             - consensus
@@ -72,7 +72,7 @@ sites:
             core: 1
             mem: 1
             disk: 20
-          number: 3
+          number: 10
         - labels:
             - simulation
             - redis
@@ -97,7 +97,7 @@ sites:
         - labels:
             - v4
           kind: FABNetv4
-          site: HAWI
+          site: UTAH
           nic:
             kind: SharedNIC
             model: ConnectX-6
@@ -141,14 +141,14 @@ experiments:
         script: |
           bin/configure.sh
       - labels:
-          - redis
-        script: |
-          bin/launch-redis.sh
-      - labels:
           - simulation
         script: |
           bin/launch-simulation.sh example_config/config.py ~/output_plots
           bin/launch-colmena.sh --hardware SIMULATOR --policy eager --config-path example_config/
+      - labels:
+          - redis
+        script: |
+          bin/launch-redis.sh
       - labels:
           - colmena
         script: |
@@ -156,7 +156,7 @@ experiments:
       - labels:
          - consensus
         script: |
-          bin/launch-swarm.sh 18 3 6 $HOME/kiso-colmena-experiment/example_config
+          bin/launch-swarm.sh 60 10 6 $HOME/kiso-colmena-experiment/example_config
       - labels:
           - random
         script: |

@@ -42,7 +42,7 @@ echo
 # -------------------------------------------------------
 # Check if this agent is leader for any role
 # -------------------------------------------------------
-AGENTS_PER_AREA=3
+AGENTS_PER_AREA=10
 GLOBAL_AGENT_NUM=$(( (AGENT_AREA - 1) * AGENTS_PER_AREA + AGENT_NUM ))
 
 MY_RAW_LINE=$(cd $HOME/SwarmAgents && python3 dump_db.py --key role --host andes \

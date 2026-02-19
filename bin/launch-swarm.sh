@@ -46,7 +46,7 @@ python3 -m generate_configs "$NUM_AGENTS" "$AGENTS_PER_GROUP" \
     --agents-per-host 1 --groups "$NUM_GROUPS" \
     --agent-hosts-file "$CONFIG_PATH/host_file"
 
-AGENTS_PER_AREA=3
+AGENTS_PER_AREA=10
 GLOBAL_AGENT_NUM=$(( (AGENT_AREA - 1) * AGENTS_PER_AREA + AGENT_NUM ))
 
 CONFIG_FILE="config_swarm_multi_${GLOBAL_AGENT_NUM}.yml"
