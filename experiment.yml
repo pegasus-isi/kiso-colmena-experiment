@@ -17,7 +17,7 @@ sites:
             core: 1
             mem: 1
             disk: 20
-          number: 10
+          number: 3
         - labels:
             - colmena
             - consensus
@@ -28,18 +28,18 @@ sites:
             core: 1
             mem: 1
             disk: 20
-          number: 10
+          number: 3
         - labels:
             - colmena
             - consensus
             - random
-          site: UCSD
+          site: NEWY
           image: docker_ubuntu_22
           flavour_desc:
             core: 1
             mem: 1
             disk: 20
-          number: 10
+          number: 3
         - labels:
             - colmena
             - consensus
@@ -50,7 +50,7 @@ sites:
             core: 1
             mem: 1
             disk: 20
-          number: 10
+          number: 3
         - labels:
             - colmena
             - consensus
@@ -61,7 +61,7 @@ sites:
             core: 1
             mem: 1
             disk: 20
-          number: 10
+          number: 3
         - labels:
             - colmena
             - consensus
@@ -72,7 +72,7 @@ sites:
             core: 1
             mem: 1
             disk: 20
-          number: 10
+          number: 3
         - labels:
             - simulation
             - redis
@@ -104,7 +104,7 @@ sites:
         - labels:
             - v4
           kind: FABNetv4
-          site: UCSD
+          site: NEWY
           nic:
             kind: SharedNIC
             model: ConnectX-6
@@ -139,6 +139,8 @@ experiments:
           - colmena
           - simulation
         script: |
+          bin/stop-containers.sh
+          bin/stop-swarm.sh
           bin/configure.sh
       - labels:
           - simulation
@@ -156,7 +158,7 @@ experiments:
       - labels:
          - consensus
         script: |
-          bin/launch-swarm.sh 60 10 6 $HOME/kiso-colmena-experiment/example_config
+          bin/launch-swarm.sh 18 3 6 $HOME/kiso-colmena-experiment/example_config
       - labels:
           - random
         script: |
@@ -164,7 +166,6 @@ experiments:
       - labels:
           - trigger
         script: |
-          bin/build-images.sh example_config/
           bin/deploy.sh example_config/ AgentControl
       - labels:
           - wait
@@ -173,6 +174,7 @@ experiments:
       - labels:
           - kpis
         script: |
+          bin/get-perturbation-time.sh
           bin/fetch-kpi-timeline.sh
       - labels:
           - colmena
@@ -199,6 +201,10 @@ experiments:
       - labels:
           - trigger
         src: /home/kiso/logs_parsed.txt
+        dst: output/kpi_logs/
+      - labels:
+          - trigger
+        src: /home/kiso/perturbation_time.txt
         dst: output/kpi_logs/
       - labels:
           - colmena

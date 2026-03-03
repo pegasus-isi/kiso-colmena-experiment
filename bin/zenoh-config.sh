@@ -35,7 +35,7 @@ fi
 ALL_SITES=(
   UTAH
   LOSA
-  UCSD
+  NEWY
   STAR
   BRIST
   FIU
@@ -47,7 +47,7 @@ ALL_SITES=(
 declare -A SITE_BACKBONE_MACHINE=(
   [UTAH]=2
   [LOSA]=1
-  [UCSD]=3
+  [NEWY]=3
   [STAR]=4
   [BRIST]=5
   [FIU]=6

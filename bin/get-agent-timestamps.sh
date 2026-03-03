@@ -42,7 +42,7 @@ echo
 # -------------------------------------------------------
 # Check if this agent is leader for any role
 # -------------------------------------------------------
-AGENTS_PER_AREA=10
+AGENTS_PER_AREA=3
 GLOBAL_AGENT_NUM=$(( (AGENT_AREA - 1) * AGENTS_PER_AREA + AGENT_NUM ))
 
 MY_RAW_LINE=$(cd $HOME/SwarmAgents && python3 dump_db.py --key role --host andes \
@@ -113,7 +113,7 @@ if [[ -n "$t_consensus" || -n "$t_role" || -n "$t_kpi" ]]; then
   cat <<EOF > "$OUTPUT_FILE"
 [
   {
-    "leader_id": $AGENT_NUM,
+    "leader_id": $GLOBAL_AGENT_NUM,
     "t_consensus": ${t_consensus:-null},
     "t_role": ${t_role:-null},
     "t_kpi": ${t_kpi:-null}
