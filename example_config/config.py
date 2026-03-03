@@ -13,6 +13,7 @@ class Config:
     failure_params = ['GENROU_46', 'GENROU_38']
     converters = False
     load_curtailment = False
+    sim_ratio = 1.5
 
     # Simulator
     tstep = 0.05
