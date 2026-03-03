@@ -10,10 +10,13 @@ class Config:
     case_path = f"{case_name}/{case_name}.xlsx"
     failure = 'load_multiple_10'
     additional_failures = []
+    failure_params = ['GENROU_46', 'GENROU_38']
+    converters = False
+    load_curtailment = False
 
     # Simulator
-    tstep = 0.01
-    tf = 30.0
+    tstep = 0.05
+    tf = 50.0
 
     # Disturbance
     td = 7.0
@@ -27,8 +30,8 @@ class Config:
     # Execution
     tdmpc = 2.5
 
-    ramp_up = -0.1
-    ramp_down = 0.1
+    ramp_up = 1
+    ramp_down = 1
 
     T_send = K
     angles = False
@@ -56,8 +59,10 @@ class Config:
     # alpha = 100
     # rho = 2.5e3
 
-    max_iter = 5 #2 intentar
-    tol = 1e-2 # ieee 1e-2
+    w_shed = 1e5
+
+    max_iter = 3 #2 intentar
+    tol = 1e-3 # ieee 1e-2
 
     fn = 60
 

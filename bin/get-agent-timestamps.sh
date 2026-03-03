@@ -113,7 +113,7 @@ if [[ -n "$t_consensus" || -n "$t_role" || -n "$t_kpi" ]]; then
   cat <<EOF > "$OUTPUT_FILE"
 [
   {
-    "leader_id": $AGENT_NUM,
+    "leader_id": $GLOBAL_AGENT_NUM,
     "t_consensus": ${t_consensus:-null},
     "t_role": ${t_role:-null},
     "t_kpi": ${t_kpi:-null}

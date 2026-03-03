@@ -5,40 +5,39 @@ from fabrictestbed_extensions.fablib.fablib import FablibManager as fablib_manag
 fablib = fablib_manager()
 slice = fablib.get_slice('colmena')
 
-# Static mapping: node hostname -> alias
-HOST_ALIAS = {
-    "colmena-sLOSA-m1-n1": "agent-1",
-    "colmena-sLOSA-m1-n2": "agent-2",
-    "colmena-sLOSA-m1-n3": "agent-3",
-    "colmena-sLOSA-m4-n1": "andes",
-
-    "colmena-sUTAH-m3-n1": "agent-7",
-    "colmena-sUTAH-m3-n2": "agent-8",
-    "colmena-sUTAH-m3-n3": "agent-9",
-
-    "colmena-sHAWI-m2-n1": "agent-4",
-    "colmena-sHAWI-m2-n2": "agent-5",
-    "colmena-sHAWI-m2-n3": "agent-6",
-}
+# Sites in slice (order determines agent numbering)
+SITES = ("LOSA", "UTAH", "NEWY", "STAR", "BRIST", "FIU")
 
 lines = []
+agent_counter = 1  # Sequential agent IDs from 1 → 18
 
-for site in ("LOSA", "UTAH", "HAWI"):
+# Special alias exceptions
+SPECIAL_ALIAS = {
+    "colmena-sLOSA-m7-n1": "andes"
+}
+
+for site in SITES:
     net = slice.get_network(name=f"FABNetv4-IPv4-{site}")
-    for iface in net.get_interfaces():
+    # Build dict: hostname -> iface
+    nodes_dict = {iface.get_node().get_name(): iface for iface in net.get_interfaces()}
+    # Sort hostnames for deterministic order
+    for hostname in sorted(nodes_dict.keys()):
+        iface = nodes_dict[hostname]
         ip = iface.get_ip_addr()
-        hostname = iface.get_node().get_name()
 
-        alias = HOST_ALIAS.get(hostname)
-        if alias is None:
-            # Skip or warn if an unexpected node appears
-            print(f"Warning: no alias for {hostname}")
-            continue
+        if hostname in SPECIAL_ALIAS:
+            alias = SPECIAL_ALIAS[hostname]
+        else:
+            alias = f"agent-{agent_counter}"
+            agent_counter += 1
 
         lines.append(f"{ip} {hostname} {alias}")
+
 
 # Append to hosts file
 with open("secrets/hosts", "a") as f:
     f.write("\n# FABRIC nodes\n")
     for line in lines:
         f.write(line + "\n")
+
+print(f"Processed {agent_counter - 1} nodes plus {len(SPECIAL_ALIAS)} special aliases. Hosts updated.")

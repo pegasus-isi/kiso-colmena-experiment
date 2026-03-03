@@ -3,7 +3,7 @@ name: colmena-experiment
 sites:
   - kind: fabric
     rc_file: secrets/fabric_rc
-    walltime: "02:00:00"
+    walltime: "10:00:00"
     name_prefix: colmena
     resources:
       machines:
@@ -22,7 +22,7 @@ sites:
             - colmena
             - consensus
             - random
-          site: HAWI
+          site: UTAH
           image: docker_ubuntu_22
           flavour_desc:
             core: 1
@@ -33,7 +33,40 @@ sites:
             - colmena
             - consensus
             - random
-          site: UTAH
+          site: NEWY
+          image: docker_ubuntu_22
+          flavour_desc:
+            core: 1
+            mem: 1
+            disk: 20
+          number: 3
+        - labels:
+            - colmena
+            - consensus
+            - random
+          site: STAR
+          image: docker_ubuntu_22
+          flavour_desc:
+            core: 1
+            mem: 1
+            disk: 20
+          number: 3
+        - labels:
+            - colmena
+            - consensus
+            - random
+          site: BRIST
+          image: docker_ubuntu_22
+          flavour_desc:
+            core: 1
+            mem: 1
+            disk: 20
+          number: 3
+        - labels:
+            - colmena
+            - consensus
+            - random
+          site: FIU
           image: docker_ubuntu_22
           flavour_desc:
             core: 1
@@ -64,14 +97,35 @@ sites:
         - labels:
             - v4
           kind: FABNetv4
-          site: HAWI
+          site: UTAH
           nic:
             kind: SharedNIC
             model: ConnectX-6
         - labels:
             - v4
           kind: FABNetv4
-          site: UTAH
+          site: NEWY
+          nic:
+            kind: SharedNIC
+            model: ConnectX-6
+        - labels:
+            - v4
+          kind: FABNetv4
+          site: STAR
+          nic:
+            kind: SharedNIC
+            model: ConnectX-6
+        - labels:
+            - v4
+          kind: FABNetv4
+          site: BRIST
+          nic:
+            kind: SharedNIC
+            model: ConnectX-6
+        - labels:
+            - v4
+          kind: FABNetv4
+          site: FIU
           nic:
             kind: SharedNIC
             model: ConnectX-6
@@ -85,16 +139,18 @@ experiments:
           - colmena
           - simulation
         script: |
+          bin/stop-containers.sh
+          bin/stop-swarm.sh
           bin/configure.sh
-      - labels:
-          - redis
-        script: |
-          bin/launch-redis.sh
       - labels:
           - simulation
         script: |
           bin/launch-simulation.sh example_config/config.py ~/output_plots
           bin/launch-colmena.sh --hardware SIMULATOR --policy eager --config-path example_config/
+      - labels:
+          - redis
+        script: |
+          bin/launch-redis.sh
       - labels:
           - colmena
         script: |
@@ -102,7 +158,7 @@ experiments:
       - labels:
          - consensus
         script: |
-          bin/launch-swarm.sh 9 3 3 $HOME/kiso-colmena-experiment/example_config
+          bin/launch-swarm.sh 18 3 6 $HOME/kiso-colmena-experiment/example_config
       - labels:
           - random
         script: |
@@ -110,7 +166,6 @@ experiments:
       - labels:
           - trigger
         script: |
-          bin/build-images.sh example_config/
           bin/deploy.sh example_config/ AgentControl
       - labels:
           - wait
@@ -119,17 +174,24 @@ experiments:
       - labels:
           - kpis
         script: |
+          bin/get-perturbation-time.sh
           bin/fetch-kpi-timeline.sh
       - labels:
           - colmena
-          - simulation
         script: |
           bin/get-agent-timestamps.sh
+      - labels:
+          - colmena
+        script: |
           bin/stop-containers.sh
       - labels:
           - consensus
         script: |
           bin/stop-swarm.sh
+      - labels:
+          - simulation
+        script: |
+          bin/stop-containers.sh 
     
     outputs:
       - labels:
@@ -139,6 +201,10 @@ experiments:
       - labels:
           - trigger
         src: /home/kiso/logs_parsed.txt
+        dst: output/kpi_logs/
+      - labels:
+          - trigger
+        src: /home/kiso/perturbation_time.txt
         dst: output/kpi_logs/
       - labels:
           - colmena
